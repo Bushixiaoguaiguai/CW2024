@@ -1,5 +1,9 @@
 package com.example.demo;
 
+import com.example.demo.Boss;
+import com.example.demo.LevelView;
+import com.example.demo.LevelViewLevelTwo;
+
 public class LevelTwo extends LevelParent {
 
 	private static final String BACKGROUND_IMAGE_NAME = "/com/example/demo/images/background2.jpg";
@@ -15,6 +19,7 @@ public class LevelTwo extends LevelParent {
 	@Override
 	protected void initializeFriendlyUnits() {
 		getRoot().getChildren().add(getUser());
+		getRoot().getChildren().add(boss.getShieldImage());
 	}
 
 	@Override

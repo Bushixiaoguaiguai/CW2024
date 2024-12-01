@@ -1,53 +1,93 @@
 package com.example.demo.controller;
 
-import java.lang.reflect.Constructor;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Observable;
 import java.util.Observer;
-
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+import com.example.demo.LevelOne;
+import com.example.demo.LevelTwo;
 import javafx.stage.Stage;
 import com.example.demo.LevelParent;
 
 public class Controller implements Observer {
 
-	private static final String LEVEL_ONE_CLASS_NAME = "com.example.demo.LevelOne";
+	private static final String LEVEL_ONE_CLASS_NAME = "com.example.demo.level.LevelOne";
 	private final Stage stage;
+	private final double screenHeight;
+	private final double screenWidth;
+	private LevelParent currentLevel;
 
-	public Controller(Stage stage) {
+	public Controller(Stage stage, double screenHeight, double screenWidth) {
 		this.stage = stage;
+		this.screenHeight = screenHeight;
+		this.screenWidth = screenWidth;
 	}
 
-	public void launchGame() throws ClassNotFoundException, NoSuchMethodException, SecurityException,
-			InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException  {
-
-			stage.show();
-			goToLevel(LEVEL_ONE_CLASS_NAME);
+	// Start Level One
+	public void startLevelOne() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+		LevelOne levelOne = new LevelOne(screenHeight, screenWidth);
+		goToLevel(levelOne);
 	}
 
-	private void goToLevel(String className) throws ClassNotFoundException, NoSuchMethodException, SecurityException,
+	// Start Level Two
+	public void startLevelTwo() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+		LevelTwo levelTwo = new LevelTwo(screenHeight, screenWidth);
+		goToLevel(levelTwo);
+	}
+
+	private void goToLevel(LevelParent level) throws ClassNotFoundException, NoSuchMethodException, SecurityException,
 			InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-			Class<?> myClass = Class.forName(className);
-			Constructor<?> constructor = myClass.getConstructor(double.class, double.class);
-			LevelParent myLevel = (LevelParent) constructor.newInstance(stage.getHeight(), stage.getWidth());
-			myLevel.addObserver(this);
-			Scene scene = myLevel.initializeScene();
-			stage.setScene(scene);
-			myLevel.startGame();
+		// Stop any existing level
+		if (currentLevel != null) {
+			currentLevel.stopGame();
+		}
+
+		// Set the new level and observe it
+		currentLevel = level;
+		currentLevel.addObserver(this);
+
+		// Set the scene for the stage
+		stage.setScene(currentLevel.initializeScene());
+
+		// Start the new level
+		currentLevel.startGame();
 
 	}
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		try {
-			goToLevel((String) arg1);
-		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException
-				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setContentText(e.getClass().toString());
-			alert.show();
+		if (arg1 instanceof String) {
+			String nextLevel = (String) arg1;
+			if (nextLevel.equals("com.example.demo.level.LevelTwo")) {
+				try {
+					startLevelTwo();
+				} catch (ClassNotFoundException e) {
+					throw new RuntimeException(e);
+				} catch (InvocationTargetException e) {
+					throw new RuntimeException(e);
+				} catch (NoSuchMethodException e) {
+					throw new RuntimeException(e);
+				} catch (InstantiationException e) {
+					throw new RuntimeException(e);
+				} catch (IllegalAccessException e) {
+					throw new RuntimeException(e);
+				}
+			}
+			else if (nextLevel.equals("com.example.demo.level.LevelOne")){
+				try {
+					startLevelOne();
+				} catch (ClassNotFoundException e) {
+					throw new RuntimeException(e);
+				} catch (InvocationTargetException e) {
+					throw new RuntimeException(e);
+				} catch (NoSuchMethodException e) {
+					throw new RuntimeException(e);
+				} catch (InstantiationException e) {
+					throw new RuntimeException(e);
+				} catch (IllegalAccessException e) {
+					throw new RuntimeException(e);
+				}
+			}
 		}
 	}
 
