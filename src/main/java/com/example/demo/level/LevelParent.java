@@ -171,8 +171,10 @@ public abstract class LevelParent extends Observable {
 	}
 
 	protected void addEnemyUnit(ActiveActorDestructible enemy) {
-		enemyUnits.add(enemy);
-		root.getChildren().add(enemy);
+		if (!enemyUnits.contains(enemy)) {
+			enemyUnits.add(enemy);
+			root.getChildren().add(enemy);
+		}
 	}
 
 	protected double getEnemyMaximumYPosition() {

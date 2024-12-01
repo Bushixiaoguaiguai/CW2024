@@ -48,7 +48,7 @@ public class UnitManager {
         enemyUnits.forEach(enemy -> spawnEnemyProjectile(((FighterPlane) enemy).fireProjectile()));
     }
 
-    public void spawnEnemyProjectile(ActiveActorDestructible projectile) {
+    private void spawnEnemyProjectile(ActiveActorDestructible projectile) {
         if (projectile != null)
         {
             root.getChildren().add(projectile);
