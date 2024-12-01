@@ -4,10 +4,10 @@ package com.example.demo.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Observable;
 import java.util.Observer;
-import com.example.demo.LevelOne;
-import com.example.demo.LevelTwo;
+import com.example.demo.level.LevelOne;
+import com.example.demo.level.LevelTwo;
 import javafx.stage.Stage;
-import com.example.demo.LevelParent;
+import com.example.demo.level.LevelParent;
 
 public class Controller implements Observer {
 

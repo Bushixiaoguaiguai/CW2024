@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.effect;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -6,7 +6,7 @@ import javafx.scene.image.ImageView;
 import java.util.Objects;
 
 public class ShieldImage extends ImageView {
-	
+
 	private static final int SHIELD_SIZE = 200;
 	
 	public ShieldImage(double xPosition, double yPosition) {
