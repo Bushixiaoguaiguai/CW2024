@@ -1,13 +1,13 @@
 package com.example.demo.level;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import com.example.demo.actors.ActiveActorDestructible;
 import com.example.demo.actors.FighterPlane;
 import com.example.demo.actors.UserPlane;
 import com.example.demo.manager.InputDetect;
 import com.example.demo.manager.CollisionDetect;
+import com.example.demo.manager.UnitManager;
 import javafx.animation.*;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -35,20 +35,26 @@ public abstract class LevelParent extends Observable {
 
 	private int currentNumberOfEnemies;
 	private LevelView levelView;
+
 	private final InputDetect inputDetect;
 	private final CollisionDetect collisionDetect;
+	private final UnitManager unitManager;
 
 	public LevelParent(String backgroundImageName, double screenHeight, double screenWidth, int playerInitialHealth) {
 		this.root = new Group();
 		this.scene = new Scene(root, screenWidth, screenHeight);
 		this.timeline = new Timeline();
 		this.user = new UserPlane(playerInitialHealth);
-		this.friendlyUnits = new ArrayList<>();
-		this.enemyUnits = new ArrayList<>();
-		this.userProjectiles = new ArrayList<>();
-		this.enemyProjectiles = new ArrayList<>();
 
-		this.background = new ImageView(new Image(getClass().getResource(backgroundImageName).toExternalForm()));
+		this.unitManager = new UnitManager(root);
+		unitManager.getFriendlyUnits().add(user);
+
+		this.friendlyUnits = unitManager.getFriendlyUnits();
+		this.enemyUnits = unitManager.getEnemyUnits();
+		this.userProjectiles = unitManager.getUserProjectiles();
+		this.enemyProjectiles = unitManager.getEnemyProjectiles();
+
+		this.background = new ImageView(new Image(Objects.requireNonNull(getClass().getResource(backgroundImageName)).toExternalForm()));
 		this.screenHeight = screenHeight;
 		this.screenWidth = screenWidth;
 		this.enemyMaximumYPosition = screenHeight - SCREEN_HEIGHT_ADJUSTMENT;
@@ -61,7 +67,12 @@ public abstract class LevelParent extends Observable {
 		this.collisionDetect = new CollisionDetect(root);
 	}
 
-	protected abstract void initializeFriendlyUnits();
+	protected void initializeFriendlyUnits(){
+		getRoot().getChildren().add(getUser());
+	};
+
+	protected void initializeEnemyUnits(){
+	}
 
 	protected abstract void checkIfGameOver();
 
@@ -72,6 +83,7 @@ public abstract class LevelParent extends Observable {
 	public Scene initializeScene() {
 		initializeBackground();
 		initializeFriendlyUnits();
+		initializeEnemyUnits();
 		levelView.showHeartDisplay();
 		return scene;
 	}
@@ -88,14 +100,18 @@ public abstract class LevelParent extends Observable {
 
 	private void updateScene() {
 		spawnEnemyUnits();
-		updateActors();
-		generateEnemyFire();
+		unitManager.generateEnemyFire();
 		updateNumberOfEnemies();
 		handleCollision();
-		removeAllDestroyedActors();
+		updateUnits();
 		updateKillCount();
 		updateLevelView();
 		checkIfGameOver();
+	}
+
+	private void updateUnits(){
+		unitManager.removeAllDestroyedActors();
+		unitManager.updateActors();
 	}
 
 	private void initializeTimeline() {
@@ -122,50 +138,6 @@ public abstract class LevelParent extends Observable {
 		collisionDetect.handleCollisions(friendlyUnits, enemyUnits);
 	}
 
-	private void generateEnemyFire() {
-		enemyUnits.forEach(enemy -> spawnEnemyProjectile(((FighterPlane) enemy).fireProjectile()));
-	}
-
-	private void spawnEnemyProjectile(ActiveActorDestructible projectile) {
-		if (projectile != null) {
-			root.getChildren().add(projectile);
-			enemyProjectiles.add(projectile);
-		}
-	}
-
-	private void updateActors() {
-		friendlyUnits.forEach(ActiveActorDestructible::updateActor);
-		enemyUnits.forEach(ActiveActorDestructible::updateActor);
-		userProjectiles.forEach(ActiveActorDestructible::updateActor);
-		enemyProjectiles.forEach(ActiveActorDestructible::updateActor);
-	}
-
-	private void removeAllDestroyedActors() {
-		removeDestroyedActors(friendlyUnits);
-		removeDestroyedActors(enemyUnits);
-		removeDestroyedActors(userProjectiles);
-		removeDestroyedActors(enemyProjectiles);
-	}
-
-	private void removeDestroyedActors(List<ActiveActorDestructible> actors) {
-		List<ActiveActorDestructible> destroyedActors = actors.stream().filter(actor -> actor.isDestroyed())
-				.collect(Collectors.toList());
-		root.getChildren().removeAll(destroyedActors);
-		actors.removeAll(destroyedActors);
-	}
-
-	private void handleCollisions(List<ActiveActorDestructible> actors1,
-								  List<ActiveActorDestructible> actors2) {
-		for (ActiveActorDestructible actor : actors2) {
-			for (ActiveActorDestructible otherActor : actors1) {
-				if (actor.getBoundsInParent().intersects(otherActor.getBoundsInParent())) {
-					actor.takeDamage();
-					otherActor.takeDamage();
-				}
-			}
-		}
-	}
-
 	private void updateLevelView() {
 		levelView.removeHearts(user.getHealth());
 	}
@@ -174,10 +146,6 @@ public abstract class LevelParent extends Observable {
 		for (int i = 0; i < currentNumberOfEnemies - enemyUnits.size(); i++) {
 			user.incrementKillCount();
 		}
-	}
-
-	private boolean enemyHasPenetratedDefenses(ActiveActorDestructible enemy) {
-		return Math.abs(enemy.getTranslateX()) > screenWidth;
 	}
 
 	protected void winGame() {
