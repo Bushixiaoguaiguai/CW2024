@@ -2,8 +2,11 @@ package com.example.demo.manager;
 
 import com.example.demo.actors.ActiveActorDestructible;
 import com.example.demo.actors.UserPlane;
+import com.example.demo.effect.Explosion;
 import javafx.scene.Group;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -15,6 +18,7 @@ import java.util.List;
 public class CollisionDetect {
 
     private final Group root;
+    private final List<Explosion> activeExplosions;
 
     /**
      * Constructs a CollisionDetect object with a reference to the JavaFX scene root.
@@ -23,6 +27,7 @@ public class CollisionDetect {
      */
     public CollisionDetect(Group root) {
         this.root = root;
+        this.activeExplosions = new ArrayList<>();
     }
 
     public void handleAllCollisions(List<ActiveActorDestructible> friendlyUnits,
@@ -32,9 +37,10 @@ public class CollisionDetect {
                                     UserPlane user,
                                     double screenWidth) {
         handleEnemyPenetration(enemyUnits, user, screenWidth);
-        handleCollisions(userProjectiles, enemyUnits);
+        handleCollisionsWithExplosion(userProjectiles, enemyUnits);
         handleCollisions(enemyProjectiles, friendlyUnits);
-        handleCollisions(friendlyUnits, enemyUnits);
+        handleCollisionsWithExplosion(friendlyUnits, enemyUnits);
+        updateExplosions();
     }
 
     /**
@@ -52,6 +58,56 @@ public class CollisionDetect {
                     actor1.takeDamage();
                     actor2.takeDamage();
                 }
+            }
+        }
+    }
+
+    /**
+     * Handles collisions between two lists of objects and triggers explosions at the point of collision.
+     *
+     * <p>If a collision is detected between any objects in the two lists, both objects take damage, and an explosion
+     * is generated at the location of the collision.</p>
+     *
+     * @param actors1 the first list of {@link ActiveActorDestructible} objects
+     * @param actors2 the second list of {@link ActiveActorDestructible} objects
+     */
+    public void handleCollisionsWithExplosion(List<ActiveActorDestructible> actors1, List<ActiveActorDestructible> actors2) {
+        for (ActiveActorDestructible actor1 : actors1) {
+            for (ActiveActorDestructible actor2 : actors2) {
+                if (actor1.getBoundsInParent().intersects(actor2.getBoundsInParent())) {
+                    actor1.takeDamage();
+                    actor2.takeDamage();
+
+                    // Create explosion at the collision point
+                    double explosionX = actor1.getBoundsInParent().getMinX();
+                    double explosionY = actor1.getBoundsInParent().getMinY();
+
+                    Explosion explosion = new Explosion(
+                            "/com/example/demo/images/explosion.png",
+                            explosionX,
+                            explosionY,
+                            64, 64,
+                            1.0,
+                            root
+                    );
+                    explosion.start();
+                    activeExplosions.add(explosion);
+                }
+            }
+        }
+    }
+
+    /**
+     * Updates and removes finished explosions from the active explosions list.
+     *
+     * <p>This method checks each active explosion and removes those that have finished.</p>
+     */
+    public void updateExplosions() {
+        Iterator<Explosion> iterator = activeExplosions.iterator();
+        while (iterator.hasNext()) {
+            Explosion explosion = iterator.next();
+            if (explosion.isFinished()) {
+                iterator.remove();
             }
         }
     }
