@@ -42,4 +42,9 @@ public class LevelTwo extends LevelParent {
 		return levelView;
 	}
 
+	@Override
+	protected void onCleanup() {
+		getRoot().getChildren().remove(boss.getShieldImage());
+		System.out.println("LevelTwo-specific cleanup complete.");
+	}
 }

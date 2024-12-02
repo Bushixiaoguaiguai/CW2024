@@ -3,7 +3,6 @@ package com.example.demo.level;
 import java.util.*;
 
 import com.example.demo.actors.ActiveActorDestructible;
-import com.example.demo.actors.FighterPlane;
 import com.example.demo.actors.UserPlane;
 import com.example.demo.manager.InputDetect;
 import com.example.demo.manager.CollisionDetect;
@@ -34,7 +33,7 @@ public abstract class LevelParent extends Observable {
 	private final List<ActiveActorDestructible> enemyProjectiles;
 
 	private int currentNumberOfEnemies;
-	private LevelView levelView;
+	private final LevelView levelView;
 
 	private final InputDetect inputDetect;
 	private final CollisionDetect collisionDetect;
@@ -84,6 +83,7 @@ public abstract class LevelParent extends Observable {
 		initializeBackground();
 		initializeFriendlyUnits();
 		initializeEnemyUnits();
+		setupInputHandling();
 		levelView.showHeartDisplay();
 		return scene;
 	}
@@ -100,7 +100,7 @@ public abstract class LevelParent extends Observable {
 
 	private void updateScene() {
 		spawnEnemyUnits();
-		unitManager.generateEnemyFire();
+		generateEnemyFire();
 		updateNumberOfEnemies();
 		handleCollision();
 		updateUnits();
@@ -124,11 +124,12 @@ public abstract class LevelParent extends Observable {
 		background.setFocusTraversable(true);
 		background.setFitHeight(screenHeight);
 		background.setFitWidth(screenWidth);
+		root.getChildren().add(background);
+	}
 
+	private void setupInputHandling() {
 		background.setOnKeyPressed(inputDetect::handlePressed);
 		background.setOnKeyReleased(inputDetect::handleReleased);
-
-		root.getChildren().add(background);
 	}
 
 	private void handleCollision(){
@@ -140,10 +141,12 @@ public abstract class LevelParent extends Observable {
 		levelView.removeHearts(user.getHealth());
 	}
 
+	private void generateEnemyFire(){
+		unitManager.generateEnemyFire();
+	};
+
 	private void updateKillCount() {
-		for (int i = 0; i < currentNumberOfEnemies - enemyUnits.size(); i++) {
-			user.incrementKillCount();
-		}
+		unitManager.updateKillCount(user, currentNumberOfEnemies);
 	}
 
 	protected void winGame() {
@@ -169,10 +172,7 @@ public abstract class LevelParent extends Observable {
 	}
 
 	protected void addEnemyUnit(ActiveActorDestructible enemy) {
-		if (!enemyUnits.contains(enemy)) {
-			enemyUnits.add(enemy);
-			root.getChildren().add(enemy);
-		}
+		unitManager.addEnemyUnit(enemy);
 	}
 
 	protected double getEnemyMaximumYPosition() {
@@ -192,21 +192,30 @@ public abstract class LevelParent extends Observable {
 	}
 
 	public void cleanup() {
+		stopTimeline();
+		clearResources();
+		onCleanup(); // Hook for derived classes
+		System.out.println("Level cleaned up.");
+	}
+
+	private void stopTimeline() {
 		if (timeline != null) {
 			timeline.stop();
 			timeline.getKeyFrames().clear();
 		}
+	}
 
+	private void clearResources() {
 		root.getChildren().clear();
-
 		background.setOnKeyPressed(null);
 		background.setOnKeyReleased(null);
-
 		friendlyUnits.clear();
 		enemyUnits.clear();
 		userProjectiles.clear();
 		enemyProjectiles.clear();
+	}
 
-		System.out.println("Level cleaned up.");
+	protected void onCleanup() {
+		// Subclasses can override to add custom cleanup logic
 	}
 }
