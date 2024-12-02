@@ -1,8 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.level.LevelFactory;
-import com.example.demo.level.LevelParent;
-import com.example.demo.level.LevelType;
+import com.example.demo.level.*;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
@@ -13,9 +12,12 @@ public class Controller {
 	private final LevelFactory levelFactory;
 	private LevelParent currentLevel;
 
-	public Controller(Stage stage, double screenWidth, double screenHeight) {
+	private static final int SCREEN_WIDTH = 1300;
+	private static final int SCREEN_HEIGHT = 750;
+
+	public Controller(Stage stage) {
 		this.stage = stage;
-		this.levelFactory = new LevelFactory(screenWidth, screenHeight);
+		this.levelFactory = new LevelFactory(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 		stage.setTitle("Sky Battle");
 		stage.setResizable(false);
@@ -30,11 +32,25 @@ public class Controller {
 				currentLevel.cleanup();
 			}
 
-			// Create and start the new level
-			currentLevel = levelFactory.createLevel(levelType);
-			currentLevel.addObserver((observable, arg) -> handleLevelTransition((LevelType) arg));
-			stage.setScene(currentLevel.initializeScene());
-			currentLevel.startGame();
+			// Handle transitions to special screens
+			switch (levelType) {
+				case MAIN_MENU -> showMainMenu();
+				case WIN -> showWinScreen();
+				case GAME_OVER -> showGameOverScreen();
+				default -> {
+					// Create and start a new game level
+					currentLevel = levelFactory.createLevel(levelType);
+					currentLevel.addObserver((observable, arg) -> {
+						if (arg instanceof LevelType nextLevelType) {
+							handleLevelTransition(nextLevelType);
+						} else {
+							handleException(new IllegalArgumentException("Invalid level transition argument: " + arg));
+						}
+					});
+					stage.setScene(currentLevel.initializeScene());
+					currentLevel.startGame();
+				}
+			}
 		} catch (Exception e) {
 			handleException(e);
 		}
@@ -43,6 +59,33 @@ public class Controller {
 	// Handle level transitions
 	private void handleLevelTransition(LevelType nextLevel) {
 		goToLevel(nextLevel);
+	}
+
+	// Show Main Menu
+	private void showMainMenu() {
+		Scene mainMenuScene = new MainMenu(SCREEN_WIDTH, SCREEN_HEIGHT,
+				() -> goToLevel(LevelType.LEVEL_ONE), // Start game callback
+				stage::close  // Quit callback
+		).getScene();
+		stage.setScene(mainMenuScene);
+	}
+
+	// Show Win Screen
+	private void showWinScreen() {
+		Scene winScene = new WinScreen(SCREEN_WIDTH, SCREEN_HEIGHT,
+				() -> goToLevel(LevelType.LEVEL_ONE), // Retry callback
+				() -> goToLevel(LevelType.MAIN_MENU)  // Main menu callback
+		).getScene();
+		stage.setScene(winScene);
+	}
+
+	// Show Game Over Screen
+	private void showGameOverScreen() {
+		Scene gameOverScene = new GameOverScreen(SCREEN_WIDTH, SCREEN_HEIGHT,
+				() -> goToLevel(LevelType.LEVEL_ONE), // Retry callback
+				() -> goToLevel(LevelType.MAIN_MENU)  // Main menu callback
+		).getScene();
+		stage.setScene(gameOverScene);
 	}
 
 	// Handle errors

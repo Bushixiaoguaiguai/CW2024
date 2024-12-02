@@ -151,12 +151,12 @@ public abstract class LevelParent extends Observable {
 
 	protected void winGame() {
 		timeline.stop();
-		levelView.showWinImage();
+		goToNextLevel(LevelType.WIN);
 	}
 
 	protected void loseGame() {
 		timeline.stop();
-		levelView.showGameOverImage();
+		goToNextLevel(LevelType.GAME_OVER);
 	}
 
 	protected UserPlane getUser() {
