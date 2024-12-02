@@ -1,6 +1,7 @@
 package com.example.demo.manager;
 
 import com.example.demo.actors.ActiveActorDestructible;
+import com.example.demo.actors.UserPlane;
 import javafx.scene.Group;
 
 import java.util.List;
@@ -24,6 +25,18 @@ public class CollisionDetect {
         this.root = root;
     }
 
+    public void handleAllCollisions(List<ActiveActorDestructible> friendlyUnits,
+                                    List<ActiveActorDestructible> enemyUnits,
+                                    List<ActiveActorDestructible> userProjectiles,
+                                    List<ActiveActorDestructible> enemyProjectiles,
+                                    UserPlane user,
+                                    double screenWidth) {
+        handleEnemyPenetration(enemyUnits, user, screenWidth);
+        handleCollisions(userProjectiles, enemyUnits);
+        handleCollisions(enemyProjectiles, friendlyUnits);
+        handleCollisions(friendlyUnits, enemyUnits);
+    }
+
     /**
      * Checks for collisions between two lists of objects and processes the results.
      *
@@ -32,7 +45,7 @@ public class CollisionDetect {
      * @param actors1 the first list of {@link ActiveActorDestructible} objects
      * @param actors2 the second list of {@link ActiveActorDestructible} objects
      */
-    public void handleCollisions(List<ActiveActorDestructible> actors1, List<ActiveActorDestructible> actors2) {
+    private void handleCollisions(List<ActiveActorDestructible> actors1, List<ActiveActorDestructible> actors2) {
         for (ActiveActorDestructible actor1 : actors1) {
             for (ActiveActorDestructible actor2 : actors2) {
                 if (actor1.getBoundsInParent().intersects(actor2.getBoundsInParent())) {

@@ -1,94 +1,55 @@
 package com.example.demo.controller;
 
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.Observable;
-import java.util.Observer;
-import com.example.demo.level.LevelOne;
-import com.example.demo.level.LevelTwo;
-import javafx.stage.Stage;
+import com.example.demo.level.LevelFactory;
 import com.example.demo.level.LevelParent;
+import com.example.demo.level.LevelType;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.stage.Stage;
 
-public class Controller implements Observer {
+public class Controller {
 
-	private static final String LEVEL_ONE_CLASS_NAME = "com.example.demo.level.LevelOne";
 	private final Stage stage;
-	private final double screenHeight;
-	private final double screenWidth;
+	private final LevelFactory levelFactory;
 	private LevelParent currentLevel;
 
-	public Controller(Stage stage, double screenHeight, double screenWidth) {
+	public Controller(Stage stage, double screenWidth, double screenHeight) {
 		this.stage = stage;
-		this.screenHeight = screenHeight;
-		this.screenWidth = screenWidth;
+		this.levelFactory = new LevelFactory(screenWidth, screenHeight);
+
+		stage.setTitle("Sky Battle");
+		stage.setResizable(false);
+		stage.show();
 	}
 
-	// Start Level One
-	public void startLevelOne() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-		LevelOne levelOne = new LevelOne(screenHeight, screenWidth);
-		goToLevel(levelOne);
-	}
-
-	// Start Level Two
-	public void startLevelTwo() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-		LevelTwo levelTwo = new LevelTwo(screenHeight, screenWidth);
-		goToLevel(levelTwo);
-	}
-
-	private void goToLevel(LevelParent level) throws ClassNotFoundException, NoSuchMethodException, SecurityException,
-			InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		// Stop any existing level
-		if (currentLevel != null) {
-			currentLevel.stopGame();
-		}
-
-		// Set the new level and observe it
-		currentLevel = level;
-		currentLevel.addObserver(this);
-
-		// Set the scene for the stage
-		stage.setScene(currentLevel.initializeScene());
-
-		// Start the new level
-		currentLevel.startGame();
-
-	}
-
-	@Override
-	public void update(Observable arg0, Object arg1) {
-		if (arg1 instanceof String) {
-			String nextLevel = (String) arg1;
-			if (nextLevel.equals("com.example.demo.level.LevelTwo")) {
-				try {
-					startLevelTwo();
-				} catch (ClassNotFoundException e) {
-					throw new RuntimeException(e);
-				} catch (InvocationTargetException e) {
-					throw new RuntimeException(e);
-				} catch (NoSuchMethodException e) {
-					throw new RuntimeException(e);
-				} catch (InstantiationException e) {
-					throw new RuntimeException(e);
-				} catch (IllegalAccessException e) {
-					throw new RuntimeException(e);
-				}
+	// Transition to a new level
+	public void goToLevel(LevelType levelType) {
+		try {
+			// Clean up the current level
+			if (currentLevel != null) {
+				currentLevel.cleanup();
 			}
-			else if (nextLevel.equals("com.example.demo.level.LevelOne")){
-				try {
-					startLevelOne();
-				} catch (ClassNotFoundException e) {
-					throw new RuntimeException(e);
-				} catch (InvocationTargetException e) {
-					throw new RuntimeException(e);
-				} catch (NoSuchMethodException e) {
-					throw new RuntimeException(e);
-				} catch (InstantiationException e) {
-					throw new RuntimeException(e);
-				} catch (IllegalAccessException e) {
-					throw new RuntimeException(e);
-				}
-			}
+
+			// Create and start the new level
+			currentLevel = levelFactory.createLevel(levelType);
+			currentLevel.addObserver((observable, arg) -> handleLevelTransition((LevelType) arg));
+			stage.setScene(currentLevel.initializeScene());
+			currentLevel.startGame();
+		} catch (Exception e) {
+			handleException(e);
 		}
 	}
 
+	// Handle level transitions
+	private void handleLevelTransition(LevelType nextLevel) {
+		goToLevel(nextLevel);
+	}
+
+	// Handle errors
+	private void handleException(Exception e) {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setContentText("An error occurred: " + e.getMessage());
+		alert.show();
+		e.printStackTrace();
+	}
 }

@@ -16,7 +16,7 @@ import javafx.util.Duration;
 
 public abstract class LevelParent extends Observable {
 
-	private static final double SCREEN_HEIGHT_ADJUSTMENT = 150;
+	private static final double SCREEN_HEIGHT_ADJUSTMENT = 50;
 	private static final int MILLISECOND_DELAY = 50;
 	private final double screenHeight;
 	private final double screenWidth;
@@ -93,9 +93,9 @@ public abstract class LevelParent extends Observable {
 		timeline.play();
 	}
 
-	public void goToNextLevel(String levelName) {
+	public void goToNextLevel(LevelType levelType) {
 		setChanged();
-		notifyObservers(levelName);
+		notifyObservers(levelType);
 	}
 
 	private void updateScene() {
@@ -133,9 +133,7 @@ public abstract class LevelParent extends Observable {
 
 	private void handleCollision(){
 		collisionDetect.handleEnemyPenetration(enemyUnits, user, screenWidth);
-		collisionDetect.handleCollisions(userProjectiles, enemyUnits);
-		collisionDetect.handleCollisions(enemyProjectiles, friendlyUnits);
-		collisionDetect.handleCollisions(friendlyUnits, enemyUnits);
+		collisionDetect.handleAllCollisions(friendlyUnits, enemyUnits, userProjectiles, enemyProjectiles, user, screenWidth);
 	}
 
 	private void updateLevelView() {
@@ -193,8 +191,22 @@ public abstract class LevelParent extends Observable {
 		currentNumberOfEnemies = enemyUnits.size();
 	}
 
-	public void stopGame() {
-		// Stop the timeline to halt updates
-		timeline.stop();
+	public void cleanup() {
+		if (timeline != null) {
+			timeline.stop();
+			timeline.getKeyFrames().clear();
+		}
+
+		root.getChildren().clear();
+
+		background.setOnKeyPressed(null);
+		background.setOnKeyReleased(null);
+
+		friendlyUnits.clear();
+		enemyUnits.clear();
+		userProjectiles.clear();
+		enemyProjectiles.clear();
+
+		System.out.println("Level cleaned up.");
 	}
 }

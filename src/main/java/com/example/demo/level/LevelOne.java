@@ -22,7 +22,7 @@ public class LevelOne extends LevelParent {
 			loseGame();
 		}
 		else if (userHasReachedKillTarget())
-			goToNextLevel(NEXT_LEVEL);
+			goToNextLevel(LevelType.LEVEL_TWO);
 	}
 
 	@Override

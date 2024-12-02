@@ -10,17 +10,13 @@ import java.util.List;
 public class UnitManager {
 
     private final Group root;
-    private final List<ActiveActorDestructible> friendlyUnits;
-    private final List<ActiveActorDestructible> enemyUnits;
-    private final List<ActiveActorDestructible> userProjectiles;
-    private final List<ActiveActorDestructible> enemyProjectiles;
+    private final List<ActiveActorDestructible> friendlyUnits = new ArrayList<>();
+    private final List<ActiveActorDestructible> enemyUnits = new ArrayList<>();
+    private final List<ActiveActorDestructible> userProjectiles = new ArrayList<>();
+    private final List<ActiveActorDestructible> enemyProjectiles = new ArrayList<>();
 
     public UnitManager(Group root) {
         this.root = root;
-        this.friendlyUnits = new ArrayList<>();
-        this.enemyUnits = new ArrayList<>();
-        this.userProjectiles = new ArrayList<>();
-        this.enemyProjectiles = new ArrayList<>();
     }
 
     public void updateActors() {

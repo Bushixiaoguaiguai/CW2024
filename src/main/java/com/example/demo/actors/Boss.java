@@ -19,7 +19,7 @@ public class Boss extends FighterPlane {
 	private static final int ZERO = 0;
 	private static final int MAX_FRAMES_WITH_SAME_MOVE = 10;
 	private static final int Y_POSITION_UPPER_BOUND = -10;
-	private static final int Y_POSITION_LOWER_BOUND = 25;
+	private static final int Y_POSITION_LOWER_BOUND = 650;
 	private static final int MAX_FRAMES_WITH_SHIELD = 30;
 	private final List<Integer> movePattern;
 	private boolean isShielded;
