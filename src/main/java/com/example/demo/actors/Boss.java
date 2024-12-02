@@ -1,6 +1,8 @@
 package com.example.demo.actors;
 
 import com.example.demo.effect.ShieldImage;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 
 import java.util.*;
 
@@ -28,6 +30,7 @@ public class Boss extends FighterPlane {
 	private int framesWithShieldActivated;
 
 	private final ShieldImage shieldImage; // Add shield for the boss
+	private final DoubleProperty currentHealth = new SimpleDoubleProperty(HEALTH);
 
 	public Boss() {
 		super(IMAGE_NAME, IMAGE_HEIGHT, INITIAL_X_POSITION, INITIAL_Y_POSITION, HEALTH);
@@ -71,6 +74,7 @@ public class Boss extends FighterPlane {
 	public void takeDamage() {
 		if (!isShielded) {
 			super.takeDamage();
+			currentHealth.set(getHealth());
 		}
 	}
 
@@ -140,4 +144,11 @@ public class Boss extends FighterPlane {
 		return shieldImage;
 	}
 
+	public DoubleProperty currentHealthProperty() {
+			return currentHealth;
+	}
+
+	public double getMaxHealth() {
+			return HEALTH;
+	}
 }
