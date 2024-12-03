@@ -40,6 +40,7 @@ public class Controller {
 				default -> {
 					// Create and start a new game level
 					currentLevel = levelFactory.createLevel(levelType);
+					System.out.println(levelType);
 					currentLevel.addObserver((observable, arg) -> {
 						if (arg instanceof LevelType nextLevelType) {
 							handleLevelTransition(nextLevelType);
@@ -64,7 +65,8 @@ public class Controller {
 	// Show Main Menu
 	private void showMainMenu() {
 		Scene mainMenuScene = new MainMenu(SCREEN_WIDTH, SCREEN_HEIGHT,
-				() -> goToLevel(LevelType.LEVEL_ONE), // Start game callback
+				() -> goToLevel(LevelType.LEVEL_ONE),
+				() -> goToLevel(LevelType.LEVEL_INFINITY), // Start game callback
 				stage::close  // Quit callback
 		).getScene();
 		stage.setScene(mainMenuScene);
@@ -73,20 +75,33 @@ public class Controller {
 	// Show Win Screen
 	private void showWinScreen() {
 		Scene winScene = new WinScreen(SCREEN_WIDTH, SCREEN_HEIGHT,
-				() -> goToLevel(LevelType.LEVEL_ONE), // Retry callback
+				() -> goToLevel(LevelType.LEVEL_INFINITY), // Retry callback
 				() -> goToLevel(LevelType.MAIN_MENU)  // Main menu callback
 		).getScene();
 		stage.setScene(winScene);
 	}
 
-	// Show Game Over Screen
 	private void showGameOverScreen() {
+		Runnable retryCallback;
+
+		// Determine the retry callback based on the current level
+		if (currentLevel instanceof LevelOne) {
+			retryCallback = () -> goToLevel(LevelType.LEVEL_ONE); // Retry LevelOne
+		} else if (currentLevel instanceof LevelInfinity) {
+			retryCallback = () -> goToLevel(LevelType.LEVEL_INFINITY); // Retry LevelInfinity
+		} else {
+			retryCallback = () -> goToLevel(LevelType.LEVEL_ONE); // Default to LevelOne
+		}
+
+		// Create GameOverScreen with the determined retry callback
 		Scene gameOverScene = new GameOverScreen(SCREEN_WIDTH, SCREEN_HEIGHT,
-				() -> goToLevel(LevelType.LEVEL_ONE), // Retry callback
-				() -> goToLevel(LevelType.MAIN_MENU)  // Main menu callback
+				retryCallback,  // Retry callback
+				() -> goToLevel(LevelType.MAIN_MENU) // Main menu callback
 		).getScene();
+
 		stage.setScene(gameOverScene);
 	}
+
 
 	// Handle errors
 	private void handleException(Exception e) {

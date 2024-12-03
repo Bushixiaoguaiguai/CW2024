@@ -195,7 +195,6 @@ public abstract class LevelParent extends Observable {
 		stopTimeline();
 		clearResources();
 		onCleanup(); // Hook for derived classes
-		System.out.println("Level cleaned up.");
 	}
 
 	private void stopTimeline() {

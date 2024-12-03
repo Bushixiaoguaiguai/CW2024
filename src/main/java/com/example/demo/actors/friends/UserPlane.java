@@ -1,5 +1,8 @@
 package com.example.demo.actors;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+
 public class UserPlane extends FighterPlane {
 
 	private static final String IMAGE_NAME = "userplane.png";
@@ -12,11 +15,12 @@ public class UserPlane extends FighterPlane {
 	private static final int PROJECTILE_X_POSITION = 110;
 	private static final int PROJECTILE_Y_POSITION_OFFSET = 20;
 	private int velocityMultiplier;
-	private int numberOfKills;
+	private final IntegerProperty numberOfKills;
 
 	public UserPlane(int initialHealth) {
 		super(IMAGE_NAME, IMAGE_HEIGHT, INITIAL_X_POSITION, INITIAL_Y_POSITION, initialHealth);
-		velocityMultiplier = 0;
+        velocityMultiplier = 0;
+		numberOfKills = new SimpleIntegerProperty(0);
 	}
 	
 	@Override
@@ -58,10 +62,14 @@ public class UserPlane extends FighterPlane {
 	}
 
 	public int getNumberOfKills() {
-		return numberOfKills;
+		return numberOfKills.get();
 	}
 
 	public void incrementKillCount() {
-		numberOfKills++;
+		numberOfKills.set(numberOfKills.get() + 1);
+	}
+
+	public IntegerProperty numberOfKillsProperty() {
+		return numberOfKills;
 	}
 }

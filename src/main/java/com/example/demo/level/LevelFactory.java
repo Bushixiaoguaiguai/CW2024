@@ -6,18 +6,16 @@ import java.util.function.Supplier;
 
 public class LevelFactory {
 
-    private final double screenWidth;
-    private final double screenHeight;
     private final Map<LevelType, Supplier<LevelParent>> levelMap;
 
     public LevelFactory(double screenWidth, double screenHeight) {
-        this.screenWidth = screenWidth;
-        this.screenHeight = screenHeight;
         this.levelMap = new HashMap<>();
 
         // Register levels here
         registerLevel(LevelType.LEVEL_ONE, () -> new LevelOne(screenHeight, screenWidth));
         registerLevel(LevelType.LEVEL_TWO, () -> new LevelTwo(screenHeight, screenWidth));
+        registerLevel(LevelType.LEVEL_INFINITY, () -> new LevelInfinity(screenHeight, screenWidth));
+
     }
 
     // Register levels dynamically

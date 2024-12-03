@@ -10,13 +10,13 @@ public class WinScreen {
 
     private final Scene scene;
 
-    public WinScreen(double screenWidth, double screenHeight, Runnable retryCallback, Runnable mainMenuCallback) {
+    public WinScreen(double screenWidth, double screenHeight, Runnable infinityModeCallback, Runnable mainMenuCallback) {
         // Victory Image
         WinImage winImage = new WinImage((screenWidth - 600) / 2, (screenHeight - 500) / 2);
 
         // Buttons
-        Button retryButton = new Button("Retry");
-        retryButton.setOnAction(e -> retryCallback.run());
+        Button retryButton = new Button("Try Infinity Mode");
+        retryButton.setOnAction(e -> infinityModeCallback.run());
 
         Button mainMenuButton = new Button("Main Menu");
         mainMenuButton.setOnAction(e -> mainMenuCallback.run());

@@ -11,16 +11,19 @@ public class MainMenu {
 
     private final Scene scene;
 
-    public MainMenu(double screenWidth, double screenHeight, Runnable startGameCallback, Runnable quitCallback) {
+    public MainMenu(double screenWidth, double screenHeight, Runnable startGameCallback, Runnable infinityModeCallback, Runnable quitCallback) {
         // Buttons
         Button startButton = new Button("Start Game");
         startButton.setOnAction(e -> startGameCallback.run());
+
+        Button infinityButton = new Button("InfinityMode");
+        infinityButton.setOnAction(e -> infinityModeCallback.run());
 
         Button quitButton = new Button("Quit");
         quitButton.setOnAction(e -> confirmQuit(quitCallback));
 
         // Layout
-        VBox layout = new VBox(20, startButton, quitButton);
+        VBox layout = new VBox(20, startButton, infinityButton, quitButton);
         layout.setAlignment(Pos.CENTER);
 
         // Scene
