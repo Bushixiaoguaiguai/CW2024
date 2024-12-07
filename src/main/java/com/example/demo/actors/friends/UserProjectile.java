@@ -1,4 +1,6 @@
-package com.example.demo.actors;
+package com.example.demo.actors.friends;
+
+import com.example.demo.actors.shared.Projectile;
 
 public class UserProjectile extends Projectile {
 
@@ -19,5 +21,4 @@ public class UserProjectile extends Projectile {
 	public void updateActor() {
 		updatePosition();
 	}
-	
 }

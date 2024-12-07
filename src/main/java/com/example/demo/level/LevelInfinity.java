@@ -1,7 +1,7 @@
 package com.example.demo.level;
 
-import com.example.demo.actors.ActiveActorDestructible;
-import com.example.demo.actors.EnemyPlane;
+import com.example.demo.actors.shared.ActiveActorDestructible;
+import com.example.demo.actors.enemies.EnemyPlane;
 import com.example.demo.effect.DestroyPlanesCounter;
 
 public class LevelInfinity extends LevelParent {

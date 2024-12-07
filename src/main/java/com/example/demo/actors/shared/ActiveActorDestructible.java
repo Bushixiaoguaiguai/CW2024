@@ -1,4 +1,4 @@
-package com.example.demo.actors;
+package com.example.demo.actors.shared;
 
 public abstract class ActiveActorDestructible extends ActiveActor implements Destructible {
 

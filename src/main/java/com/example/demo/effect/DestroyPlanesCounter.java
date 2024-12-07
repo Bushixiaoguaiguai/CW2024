@@ -1,6 +1,6 @@
 package com.example.demo.effect;
 
-import com.example.demo.actors.UserPlane;
+import com.example.demo.actors.friends.UserPlane;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;

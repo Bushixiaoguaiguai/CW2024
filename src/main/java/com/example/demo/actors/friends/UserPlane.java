@@ -1,5 +1,8 @@
-package com.example.demo.actors;
+package com.example.demo.actors.friends;
 
+import com.example.demo.actors.shared.ActiveActorDestructible;
+import com.example.demo.actors.shared.FighterPlane;
+import com.example.demo.level.manager.SoundEffectManager;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
@@ -16,11 +19,13 @@ public class UserPlane extends FighterPlane {
 	private static final int PROJECTILE_Y_POSITION_OFFSET = 20;
 	private int velocityMultiplier;
 	private final IntegerProperty numberOfKills;
+	private SoundEffectManager soundEffectManager;
 
 	public UserPlane(int initialHealth) {
 		super(IMAGE_NAME, IMAGE_HEIGHT, INITIAL_X_POSITION, INITIAL_Y_POSITION, initialHealth);
         velocityMultiplier = 0;
 		numberOfKills = new SimpleIntegerProperty(0);
+		soundEffectManager = new SoundEffectManager();
 	}
 	
 	@Override
@@ -42,6 +47,7 @@ public class UserPlane extends FighterPlane {
 	
 	@Override
 	public ActiveActorDestructible fireProjectile() {
+		soundEffectManager.playShootSound();
 		return new UserProjectile(PROJECTILE_X_POSITION, getProjectileYPosition(PROJECTILE_Y_POSITION_OFFSET));
 	}
 

@@ -1,6 +1,6 @@
 package com.example.demo.effect;
 
-import com.example.demo.actors.Boss;
+import com.example.demo.actors.enemies.Boss;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;

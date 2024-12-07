@@ -1,5 +1,7 @@
-package com.example.demo.actors;
+package com.example.demo.actors.enemies;
 
+import com.example.demo.actors.shared.ActiveActorDestructible;
+import com.example.demo.actors.shared.FighterPlane;
 import com.example.demo.effect.ShieldImage;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;

@@ -2,11 +2,11 @@ package com.example.demo.level;
 
 import java.util.*;
 
-import com.example.demo.actors.ActiveActorDestructible;
-import com.example.demo.actors.UserPlane;
-import com.example.demo.manager.InputDetect;
-import com.example.demo.manager.CollisionDetect;
-import com.example.demo.manager.UnitManager;
+import com.example.demo.actors.shared.ActiveActorDestructible;
+import com.example.demo.actors.friends.UserPlane;
+import com.example.demo.level.manager.InputDetect;
+import com.example.demo.level.manager.CollisionDetect;
+import com.example.demo.level.manager.UnitManager;
 import javafx.animation.*;
 import javafx.scene.Group;
 import javafx.scene.Scene;

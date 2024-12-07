@@ -1,6 +1,6 @@
 package com.example.demo.level;
 
-import com.example.demo.actors.Boss;
+import com.example.demo.actors.enemies.Boss;
 import com.example.demo.effect.HpBarDisplay;
 
 public class LevelTwo extends LevelParent {

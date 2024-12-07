@@ -1,7 +1,7 @@
-package com.example.demo.manager;
+package com.example.demo.level.manager;
 
-import com.example.demo.actors.ActiveActorDestructible;
-import com.example.demo.actors.UserPlane;
+import com.example.demo.actors.shared.ActiveActorDestructible;
+import com.example.demo.actors.friends.UserPlane;
 import com.example.demo.effect.Explosion;
 import javafx.scene.Group;
 
@@ -19,6 +19,7 @@ public class CollisionDetect {
 
     private final Group root;
     private final List<Explosion> activeExplosions;
+    private final SoundEffectManager soundEffectManager;
 
     /**
      * Constructs a CollisionDetect object with a reference to the JavaFX scene root.
@@ -28,6 +29,7 @@ public class CollisionDetect {
     public CollisionDetect(Group root) {
         this.root = root;
         this.activeExplosions = new ArrayList<>();
+        soundEffectManager = new SoundEffectManager();
     }
 
     public void handleAllCollisions(List<ActiveActorDestructible> friendlyUnits,
@@ -91,6 +93,7 @@ public class CollisionDetect {
                             root
                     );
                     explosion.start();
+                    soundEffectManager.playExplosionSound();
                     activeExplosions.add(explosion);
                 }
             }

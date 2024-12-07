@@ -1,8 +1,8 @@
-package com.example.demo.manager;
+package com.example.demo.level.manager;
 
-import com.example.demo.actors.ActiveActorDestructible;
-import com.example.demo.actors.FighterPlane;
-import com.example.demo.actors.UserPlane;
+import com.example.demo.actors.shared.ActiveActorDestructible;
+import com.example.demo.actors.shared.FighterPlane;
+import com.example.demo.actors.friends.UserPlane;
 import javafx.scene.Group;
 
 import java.util.ArrayList;

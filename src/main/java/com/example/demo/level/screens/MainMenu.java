@@ -1,4 +1,4 @@
-package com.example.demo.level;
+package com.example.demo.level.screens;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

@@ -1,4 +1,4 @@
-package com.example.demo.level;
+package com.example.demo.level.screens;
 
 import com.example.demo.effect.WinImage;
 import javafx.geometry.Pos;
