@@ -38,6 +38,8 @@ public class InputDetect {
      * <ul>
      *     <li><b>UP</b>: Moves the user's plane upward.</li>
      *     <li><b>DOWN</b>: Moves the user's plane downward.</li>
+     *     <li><b>LEFT</b>: Moves the user's plane leftward.</li>
+     *     <li><b>RIGHT</b>: Moves the user's plane rightward.</li>
      *     <li><b>SPACE</b>: Fires a projectile if the space key is pressed.</li>
      * </ul>
      *
@@ -48,6 +50,8 @@ public class InputDetect {
         switch (kc) {
             case UP -> user.moveUp();
             case DOWN -> user.moveDown();
+            case LEFT -> user.moveLeft();
+            case RIGHT -> user.moveRight();
             case SPACE -> {
                 if (!isSpacePressed) {
                     fireProjectile();
@@ -71,7 +75,8 @@ public class InputDetect {
     public void handleReleased(KeyEvent e) {
         KeyCode kc = e.getCode();
         switch (kc) {
-            case UP, DOWN -> user.stop();
+            case UP, DOWN -> user.stopVertical();
+            case LEFT, RIGHT -> user.stopHorizontal();
             case SPACE -> isSpacePressed = false;
         }
     }

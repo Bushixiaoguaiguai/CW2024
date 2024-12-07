@@ -18,7 +18,7 @@ import java.util.List;
 public class CollisionDetect {
 
     private final Group root;
-    private final List<Explosion> activeExplosions;
+    final List<Explosion> activeExplosions;
     private final SoundEffectManager soundEffectManager;
 
     /**
@@ -73,7 +73,7 @@ public class CollisionDetect {
      * @param actors1 the first list of {@link ActiveActorDestructible} objects
      * @param actors2 the second list of {@link ActiveActorDestructible} objects
      */
-    public void handleCollisionsWithExplosion(List<ActiveActorDestructible> actors1, List<ActiveActorDestructible> actors2) {
+    private void handleCollisionsWithExplosion(List<ActiveActorDestructible> actors1, List<ActiveActorDestructible> actors2) {
         for (ActiveActorDestructible actor1 : actors1) {
             for (ActiveActorDestructible actor2 : actors2) {
                 if (actor1.getBoundsInParent().intersects(actor2.getBoundsInParent())) {
