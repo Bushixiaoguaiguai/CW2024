@@ -16,7 +16,7 @@ import javafx.util.Duration;
 public abstract class LevelParent extends Observable {
 
 	private static final double SCREEN_HEIGHT_ADJUSTMENT = 50;
-	private static final int MILLISECOND_DELAY = 50;
+	private static final int MILLISECOND_DELAY = 16;
 	private final double screenHeight;
 	private final double screenWidth;
 	private final double enemyMaximumYPosition;

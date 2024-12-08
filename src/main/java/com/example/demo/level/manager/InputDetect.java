@@ -92,4 +92,8 @@ public class InputDetect {
         root.getChildren().add(projectile);
         userProjectiles.add(projectile);
     }
+
+    public boolean isSpacePressed() {
+        return isSpacePressed;
+    }
 }
