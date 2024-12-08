@@ -4,10 +4,9 @@ import com.example.demo.actors.shared.ActiveActorDestructible;
 import com.example.demo.actors.friends.UserPlane;
 import com.example.demo.effect.Explosion;
 import javafx.scene.Group;
+import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * The CollisionDetect class provides methods to handle collision detection and related game logic.
@@ -20,6 +19,7 @@ public class CollisionDetect {
     private final Group root;
     final List<Explosion> activeExplosions;
     private final SoundEffectManager soundEffectManager;
+    private final Set<Pair<ActiveActorDestructible, ActiveActorDestructible>> processedCollisions = new HashSet<>();
 
     /**
      * Constructs a CollisionDetect object with a reference to the JavaFX scene root.
@@ -56,12 +56,17 @@ public class CollisionDetect {
     private void handleCollisions(List<ActiveActorDestructible> actors1, List<ActiveActorDestructible> actors2) {
         for (ActiveActorDestructible actor1 : actors1) {
             for (ActiveActorDestructible actor2 : actors2) {
-                if (actor1.getBoundsInParent().intersects(actor2.getBoundsInParent())) {
+                Pair<ActiveActorDestructible, ActiveActorDestructible> collisionPair = new Pair<>(actor1, actor2);
+                if (actor1.getBoundsInParent().intersects(actor2.getBoundsInParent()) &&
+                        !processedCollisions.contains(collisionPair)) {
+                    System.out.println("Processing collision: " + actor1 + " with " + actor2);
                     actor1.takeDamage();
                     actor2.takeDamage();
+                    processedCollisions.add(collisionPair);
                 }
             }
         }
+        processedCollisions.clear();
     }
 
     /**
@@ -76,9 +81,12 @@ public class CollisionDetect {
     private void handleCollisionsWithExplosion(List<ActiveActorDestructible> actors1, List<ActiveActorDestructible> actors2) {
         for (ActiveActorDestructible actor1 : actors1) {
             for (ActiveActorDestructible actor2 : actors2) {
-                if (actor1.getBoundsInParent().intersects(actor2.getBoundsInParent())) {
+                Pair<ActiveActorDestructible, ActiveActorDestructible> collisionPair = new Pair<>(actor1, actor2);
+                if (actor1.getBoundsInParent().intersects(actor2.getBoundsInParent()) &&
+                        !processedCollisions.contains(collisionPair)) {
                     actor1.takeDamage();
                     actor2.takeDamage();
+                    processedCollisions.add(collisionPair);
 
                     // Create explosion at the collision point
                     double explosionX = actor1.getBoundsInParent().getMinX();
@@ -98,6 +106,7 @@ public class CollisionDetect {
                 }
             }
         }
+        processedCollisions.clear();
     }
 
     /**

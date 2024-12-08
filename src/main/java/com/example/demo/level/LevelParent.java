@@ -133,7 +133,6 @@ public abstract class LevelParent extends Observable {
 	}
 
 	private void handleCollision(){
-		collisionDetect.handleEnemyPenetration(enemyUnits, user, screenWidth);
 		collisionDetect.handleAllCollisions(friendlyUnits, enemyUnits, userProjectiles, enemyProjectiles, user, screenWidth);
 	}
 
