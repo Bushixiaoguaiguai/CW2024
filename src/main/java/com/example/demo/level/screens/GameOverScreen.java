@@ -15,11 +15,8 @@ public class GameOverScreen {
         GameOverImage gameOverImage = new GameOverImage((screenWidth - 600) / 2, (screenHeight - 500) / 2);
 
         // Buttons
-        Button retryButton = new Button("Retry");
-        retryButton.setOnAction(e -> retryCallback.run());
-
-        Button mainMenuButton = new Button("Main Menu");
-        mainMenuButton.setOnAction(e -> mainMenuCallback.run());
+        Button retryButton = createButton("Retry", retryCallback);
+        Button mainMenuButton = createButton("Main Menu", mainMenuCallback);
 
         // Layout
         VBox layout = new VBox(20, gameOverImage, retryButton, mainMenuButton);
@@ -27,6 +24,13 @@ public class GameOverScreen {
 
         // Scene
         scene = new Scene(layout, screenWidth, screenHeight);
+    }
+
+    private Button createButton(String text, Runnable action) {
+        Button button = new Button(text);
+        button.setStyle("-fx-font-size: 18px; -fx-padding: 10px 20px;");
+        button.setOnAction(e -> action.run());
+        return button;
     }
 
     public Scene getScene() {

@@ -11,7 +11,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 public class Controller {
-
 	private final Stage stage;
 	private final LevelFactory levelFactory;
 	private LevelParent currentLevel;

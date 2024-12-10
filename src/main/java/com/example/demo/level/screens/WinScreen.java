@@ -15,11 +15,8 @@ public class WinScreen {
         WinImage winImage = new WinImage((screenWidth - 600) / 2, (screenHeight - 500) / 2);
 
         // Buttons
-        Button retryButton = new Button("Try Infinity Mode");
-        retryButton.setOnAction(e -> infinityModeCallback.run());
-
-        Button mainMenuButton = new Button("Main Menu");
-        mainMenuButton.setOnAction(e -> mainMenuCallback.run());
+        Button retryButton = createButton("Try Infinity Mode", infinityModeCallback);
+        Button mainMenuButton = createButton("Main Menu", mainMenuCallback);
 
         // Layout
         VBox layout = new VBox(20, winImage, retryButton, mainMenuButton);
@@ -27,6 +24,13 @@ public class WinScreen {
 
         // Scene
         scene = new Scene(layout, screenWidth, screenHeight);
+    }
+
+    private Button createButton(String text, Runnable action) {
+        Button button = new Button(text);
+        button.setStyle("-fx-font-size: 18px; -fx-padding: 10px 20px;");
+        button.setOnAction(e -> action.run());
+        return button;
     }
 
     public Scene getScene() {
