@@ -13,4 +13,5 @@ module com.example.demo {
     opens com.example.demo.actors.shared to javafx.fxml;
     opens com.example.demo.actors.friends to javafx.fxml;
     opens com.example.demo.actors.enemies to javafx.fxml;
+    opens com.example.demo.level.manager to javafx.fxml;
 }

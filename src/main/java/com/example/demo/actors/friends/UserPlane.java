@@ -28,7 +28,7 @@ public class UserPlane extends FighterPlane {
 		this.verticalVelocityMultiplier = 0;
 		this.horizontalVelocityMultiplier = 0;
 		numberOfKills = new SimpleIntegerProperty(0);
-		soundEffectManager = new SoundEffectManager();
+		soundEffectManager = SoundEffectManager.getInstance();
 	}
 	
 	@Override

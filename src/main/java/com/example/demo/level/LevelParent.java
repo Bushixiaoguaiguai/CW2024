@@ -47,7 +47,6 @@ public abstract class LevelParent extends Observable {
 		this.user = new UserPlane(playerInitialHealth);
 
 		this.unitManager = new UnitManager(root);
-		unitManager.getFriendlyUnits().add(user);
 
 		this.friendlyUnits = unitManager.getFriendlyUnits();
 		this.enemyUnits = unitManager.getEnemyUnits();

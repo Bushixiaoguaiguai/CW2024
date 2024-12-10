@@ -2,7 +2,7 @@ package com.example.demo.effect;
 
 import javafx.scene.media.AudioClip;
 
-import java.io.File;
+import java.net.URL;
 
 public class SoundEffectPlayer {
 
@@ -10,14 +10,14 @@ public class SoundEffectPlayer {
 
     /**
      * Initializes the sound effect player with a given sound file.
-     * @param soundFilePath The file path to the sound effect (e.g., "src/main/resources/sounds/explosion.mp3").
+     * @param soundFilePath The relative file path to the sound effect (e.g., "/com/example/demo/audios/explosion.mp3").
      */
     public SoundEffectPlayer(String soundFilePath) {
-        try {
-            File soundFile = new File(soundFilePath);
-            audioClip = new AudioClip(soundFile.toURI().toString());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to load sound file: " + soundFilePath, e);
+        URL resource = getClass().getResource(soundFilePath);
+        if (resource != null) {
+            audioClip = new AudioClip(resource.toString());
+        } else {
+            throw new IllegalArgumentException("Sound file not found: " + soundFilePath);
         }
     }
 
@@ -31,13 +31,12 @@ public class SoundEffectPlayer {
     }
 
     /**
-     * Plays the sound effect with a specified volume.
+     * Adjusts the volume of the sound effect.
      * @param volume A double value between 0.0 (mute) and 1.0 (maximum volume).
      */
-    public void play(double volume) {
+    public void setVolume(double volume) {
         if (audioClip != null) {
-            audioClip.setVolume(Math.max(0.0, Math.min(volume, 1.0))); // Ensure volume is within [0.0, 1.0]
-            audioClip.play();
+            audioClip.setVolume(Math.max(0.0, Math.min(volume, 1.0))); // Clamp volume between 0.0 and 1.0
         }
     }
 }

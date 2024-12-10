@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.effect.MusicPlayer;
+import com.example.demo.level.manager.BackGroundMusicManager;
 import com.example.demo.level.*;
 import com.example.demo.level.screens.GameOverScreen;
 import com.example.demo.level.screens.MainMenu;
@@ -19,12 +19,12 @@ public class Controller {
 	private static final int SCREEN_WIDTH = 1300;
 	private static final int SCREEN_HEIGHT = 750;
 
-	private MusicPlayer musicPlayer;
+	private BackGroundMusicManager backGroundMusicManager;
 
 	public Controller(Stage stage) {
-		musicPlayer = new MusicPlayer("D:\\year2\\CW2024\\src\\main\\resources\\com\\example\\demo\\audios\\bgm.mp3");
-		musicPlayer.setVolume(0.5); // Set volume to 50%
-		musicPlayer.play();
+		backGroundMusicManager = BackGroundMusicManager.getInstance();
+		backGroundMusicManager.setVolume(0.5); // Set volume to 50%
+		backGroundMusicManager.play();
 
 		this.stage = stage;
 		this.levelFactory = new LevelFactory(SCREEN_WIDTH, SCREEN_HEIGHT);

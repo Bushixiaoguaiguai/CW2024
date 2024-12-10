@@ -6,7 +6,6 @@ import com.example.demo.actors.friends.UserPlane;
 import com.example.demo.effect.Explosion;
 import com.example.demo.effect.HeartDisplay;
 import javafx.scene.Group;
-import javafx.util.Pair;
 
 import java.util.*;
 
@@ -21,8 +20,7 @@ public class CollisionDetect {
     private final Group root;
     final List<Explosion> activeExplosions;
     private final SoundEffectManager soundEffectManager;
-    private final Set<Pair<ActiveActorDestructible, ActiveActorDestructible>> processedCollisions = new HashSet<>();
-    private static final double HEART_DROP_PROBABILITY = 1;
+    private static final double HEART_DROP_PROBABILITY = 0.1;
     private final List<HeartDrop> heartDrops = new ArrayList<>();
     private final HeartDisplay heartDisplay;
 
@@ -35,7 +33,7 @@ public class CollisionDetect {
         this.root = root;
         this.activeExplosions = new ArrayList<>();
         this.heartDisplay = heartDisplay;
-        soundEffectManager = new SoundEffectManager();
+        soundEffectManager = SoundEffectManager.getInstance();
     }
 
     public void handleAllCollisions(List<ActiveActorDestructible> friendlyUnits,
@@ -62,17 +60,13 @@ public class CollisionDetect {
     private void handleCollisions(List<ActiveActorDestructible> actors1, List<ActiveActorDestructible> actors2) {
         for (ActiveActorDestructible actor1 : actors1) {
             for (ActiveActorDestructible actor2 : actors2) {
-                Pair<ActiveActorDestructible, ActiveActorDestructible> collisionPair = new Pair<>(actor1, actor2);
-                if (actor1.getBoundsInParent().intersects(actor2.getBoundsInParent()) &&
-                        !processedCollisions.contains(collisionPair)) {
-                    System.out.println("Processing collision: " + actor1 + " with " + actor2);
+
+                if (actor1.getBoundsInParent().intersects(actor2.getBoundsInParent())) {
                     actor1.takeDamage();
                     actor2.takeDamage();
-                    processedCollisions.add(collisionPair);
                 }
             }
         }
-        processedCollisions.clear();
     }
 
     /**
@@ -87,12 +81,9 @@ public class CollisionDetect {
     private void handleCollisionsWithExplosion(List<ActiveActorDestructible> actors1, List<ActiveActorDestructible> actors2) {
         for (ActiveActorDestructible actor1 : actors1) {
             for (ActiveActorDestructible actor2 : actors2) {
-                Pair<ActiveActorDestructible, ActiveActorDestructible> collisionPair = new Pair<>(actor1, actor2);
-                if (actor1.getBoundsInParent().intersects(actor2.getBoundsInParent()) &&
-                        !processedCollisions.contains(collisionPair)) {
+                if (actor1.getBoundsInParent().intersects(actor2.getBoundsInParent())) {
                     actor1.takeDamage();
                     actor2.takeDamage();
-                    processedCollisions.add(collisionPair);
 
                     double heartX = actor2.getLayoutX() + actor2.getTranslateX();
                     double heartY = actor2.getLayoutY() + actor2.getTranslateY();
@@ -118,7 +109,6 @@ public class CollisionDetect {
                 }
             }
         }
-        processedCollisions.clear();
     }
 
     /**
