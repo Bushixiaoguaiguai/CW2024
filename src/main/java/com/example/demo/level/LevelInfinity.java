@@ -12,6 +12,7 @@ public class LevelInfinity extends LevelParent {
     private static final double ENEMY_SPAWN_PROBABILITY = .4;
     private DestroyPlanesCounter destroyPlanesCounter;
 
+
     public LevelInfinity(double screenHeight, double screenWidth) {
         super(BACKGROUND_IMAGE_NAME, screenHeight, screenWidth, PLAYER_INITIAL_HEALTH);
     }

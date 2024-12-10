@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.example.demo.actors.shared.ActiveActorDestructible;
 import com.example.demo.actors.friends.UserPlane;
+import com.example.demo.effect.HeartDisplay;
 import com.example.demo.level.manager.InputDetect;
 import com.example.demo.level.manager.CollisionDetect;
 import com.example.demo.level.manager.UnitManager;
@@ -58,12 +59,13 @@ public abstract class LevelParent extends Observable {
 		this.screenWidth = screenWidth;
 		this.enemyMaximumYPosition = screenHeight - SCREEN_HEIGHT_ADJUSTMENT;
 		this.levelView = instantiateLevelView();
+		HeartDisplay heartDisplay = levelView.getHeartDisplay();
 		this.currentNumberOfEnemies = 0;
 		initializeTimeline();
 		friendlyUnits.add(user);
 
 		inputDetect = new InputDetect(user, root, userProjectiles);
-		this.collisionDetect = new CollisionDetect(root);
+		this.collisionDetect = new CollisionDetect(root, heartDisplay);
 	}
 
 	protected void initializeFriendlyUnits(){
@@ -104,6 +106,7 @@ public abstract class LevelParent extends Observable {
 		updateNumberOfEnemies();
 		handleCollision();
 		updateUnits();
+		updateHeartDrops();
 		updateKillCount();
 		updateLevelView();
 		checkIfGameOver();
@@ -216,4 +219,8 @@ public abstract class LevelParent extends Observable {
 	protected void onCleanup() {
 		// Subclasses can override to add custom cleanup logic
 	}
+
+	private void updateHeartDrops(){
+		collisionDetect.updateHeartDrops(user);
+	};
 }

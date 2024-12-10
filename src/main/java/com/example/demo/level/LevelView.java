@@ -1,8 +1,6 @@
 package com.example.demo.level;
 
-import com.example.demo.effect.GameOverImage;
 import com.example.demo.effect.HeartDisplay;
-import com.example.demo.effect.WinImage;
 import javafx.scene.Group;
 
 public class LevelView {
@@ -27,4 +25,8 @@ public class LevelView {
 			heartDisplay.removeHeart();
 		}
 	}
+	public HeartDisplay getHeartDisplay() {
+		return heartDisplay;
+	}
+
 }

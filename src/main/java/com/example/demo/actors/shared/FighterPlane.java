@@ -34,5 +34,12 @@ public abstract class FighterPlane extends ActiveActorDestructible {
 	public int getHealth() {
 		return health;
 	}
-		
+
+	public void increaseHealth() {
+		if (getHealth() + 1 <= 8) {
+			System.out.println("Health increased by 1");
+			health++;
+		}
+	}
+
 }

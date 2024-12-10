@@ -3,7 +3,6 @@ package com.example.demo.actors.shared;
 public abstract class ActiveActorDestructible extends ActiveActor implements Destructible {
 
 	private boolean isDestroyed;
-	private Runnable onDestroyedCallback;
 
 	public ActiveActorDestructible(String imageName, int imageHeight, double initialXPos, double initialYPos) {
 		super(imageName, imageHeight, initialXPos, initialYPos);

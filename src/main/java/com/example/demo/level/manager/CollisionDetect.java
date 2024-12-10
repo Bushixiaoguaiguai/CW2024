@@ -1,8 +1,10 @@
 package com.example.demo.level.manager;
 
+import com.example.demo.actors.friends.HeartDrop;
 import com.example.demo.actors.shared.ActiveActorDestructible;
 import com.example.demo.actors.friends.UserPlane;
 import com.example.demo.effect.Explosion;
+import com.example.demo.effect.HeartDisplay;
 import javafx.scene.Group;
 import javafx.util.Pair;
 
@@ -20,15 +22,19 @@ public class CollisionDetect {
     final List<Explosion> activeExplosions;
     private final SoundEffectManager soundEffectManager;
     private final Set<Pair<ActiveActorDestructible, ActiveActorDestructible>> processedCollisions = new HashSet<>();
+    private static final double HEART_DROP_PROBABILITY = 1;
+    private final List<HeartDrop> heartDrops = new ArrayList<>();
+    private final HeartDisplay heartDisplay;
 
     /**
      * Constructs a CollisionDetect object with a reference to the JavaFX scene root.
      *
      * @param root the JavaFX Group that represents the root node of the scene graph
      */
-    public CollisionDetect(Group root) {
+    public CollisionDetect(Group root, HeartDisplay heartDisplay) {
         this.root = root;
         this.activeExplosions = new ArrayList<>();
+        this.heartDisplay = heartDisplay;
         soundEffectManager = new SoundEffectManager();
     }
 
@@ -41,7 +47,7 @@ public class CollisionDetect {
         handleEnemyPenetration(enemyUnits, user, screenWidth);
         handleCollisionsWithExplosion(userProjectiles, enemyUnits);
         handleCollisions(enemyProjectiles, friendlyUnits);
-        handleCollisionsWithExplosion(friendlyUnits, enemyUnits);
+        handleCollisions(friendlyUnits, enemyUnits);
         updateExplosions();
     }
 
@@ -88,14 +94,20 @@ public class CollisionDetect {
                     actor2.takeDamage();
                     processedCollisions.add(collisionPair);
 
-                    // Create explosion at the collision point
-                    double explosionX = actor1.getBoundsInParent().getMinX();
-                    double explosionY = actor1.getBoundsInParent().getMinY();
+                    double heartX = actor2.getLayoutX() + actor2.getTranslateX();
+                    double heartY = actor2.getLayoutY() + actor2.getTranslateY();
+
+                    if (Math.random() < HEART_DROP_PROBABILITY) {
+                        System.out.println("HeartDrop Position - X: " + heartX + ", Y: " + heartY);
+                        HeartDrop heartDrop = new HeartDrop(heartX, heartY);
+                        heartDrops.add(heartDrop);
+                        root.getChildren().add(heartDrop);
+                        System.out.println("Heart spawned!");
+                    }
 
                     Explosion explosion = new Explosion(
                             "/com/example/demo/images/explosion.png",
-                            explosionX,
-                            explosionY,
+                            heartX, heartY,
                             64, 64,
                             1.0,
                             root
@@ -138,6 +150,24 @@ public class CollisionDetect {
             if (Math.abs(enemy.getTranslateX()) > screenWidth) {
                 userPlane.takeDamage();
                 enemy.destroy();
+            }
+        }
+    }
+
+    public void updateHeartDrops(UserPlane userPlane) {
+        Iterator<HeartDrop> iterator = heartDrops.iterator();
+        while (iterator.hasNext()) {
+            HeartDrop heart = iterator.next();
+            heart.updatePosition();
+            if (heart.getBoundsInParent().intersects(userPlane.getBoundsInParent())) {
+                System.out.println("Heart collected!");
+                userPlane.increaseHealth();
+                heartDisplay.addHeart();
+                iterator.remove();
+                root.getChildren().remove(heart);
+            } else if (heart.getTranslateX() + heart.getLayoutX() < 0) {
+                iterator.remove();
+                root.getChildren().remove(heart);
             }
         }
     }
