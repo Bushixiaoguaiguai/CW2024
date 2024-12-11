@@ -111,7 +111,7 @@ public abstract class LevelParent extends Observable {
 		checkIfGameOver();
 	}
 
-	private void updateUnits(){
+	void updateUnits(){
 		unitManager.removeAllDestroyedActors();
 		unitManager.updateActors();
 	}
@@ -222,4 +222,16 @@ public abstract class LevelParent extends Observable {
 	private void updateHeartDrops(){
 		collisionDetect.updateHeartDrops(user);
 	};
+
+	public Timeline getTimeline() {
+		return timeline;
+	}
+
+	public List<ActiveActorDestructible> getFriendlyUnits() {
+		return friendlyUnits;
+	}
+
+	public List<ActiveActorDestructible> getEnemyUnits() {
+		return enemyUnits;
+	}
 }
