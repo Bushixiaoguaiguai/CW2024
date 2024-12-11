@@ -1,4 +1,4 @@
-package com.example.demo.effect;
+package com.example.demo.display;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -10,9 +10,9 @@ import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
 /**
- * The Explosion class represents an animated explosion effect using a sprite sheet.
+ * The Explosion class represents an animated explosion display using a sprite sheet.
  *
- * <p>This class handles the setup, animation, and cleanup of an explosion effect in a JavaFX scene.
+ * <p>This class handles the setup, animation, and cleanup of an explosion display in a JavaFX scene.
  * It animates frames of a sprite sheet over a specified duration and removes itself from the scene once finished.</p>
  */
 public class Explosion {
@@ -25,7 +25,7 @@ public class Explosion {
     private boolean isPlaying;
 
     /**
-     * Constructs an Explosion object to display an animated explosion effect.
+     * Constructs an Explosion object to display an animated explosion display.
      *
      * @param texturePath        the path to the sprite sheet image for the explosion animation
      * @param x                  the x-coordinate of the explosion's position in the scene

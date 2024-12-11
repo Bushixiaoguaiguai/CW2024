@@ -4,7 +4,7 @@ import java.util.*;
 
 import com.example.demo.actors.shared.ActiveActorDestructible;
 import com.example.demo.actors.friends.UserPlane;
-import com.example.demo.effect.HeartDisplay;
+import com.example.demo.display.HeartDisplay;
 import com.example.demo.level.manager.InputDetect;
 import com.example.demo.level.manager.CollisionDetect;
 import com.example.demo.level.manager.UnitManager;
@@ -14,10 +14,15 @@ import javafx.scene.Scene;
 import javafx.scene.image.*;
 import javafx.util.Duration;
 
+/**
+ * Abstract base class for all game levels. This class defines the shared behavior and properties for game levels, including
+ * initialization of the scene, timeline management, and unit handling.
+ */
 public abstract class LevelParent extends Observable {
 
 	private static final double SCREEN_HEIGHT_ADJUSTMENT = 50;
 	private static final int MILLISECOND_DELAY = 16;
+
 	private final double screenHeight;
 	private final double screenWidth;
 	private final double enemyMaximumYPosition;
@@ -40,6 +45,14 @@ public abstract class LevelParent extends Observable {
 	private final CollisionDetect collisionDetect;
 	private final UnitManager unitManager;
 
+	/**
+	 * Constructs a new game level with the specified parameters.
+	 *
+	 * @param backgroundImageName the name of the background image file.
+	 * @param screenHeight the height of the game screen.
+	 * @param screenWidth the width of the game screen.
+	 * @param playerInitialHealth the initial health of the player's plane.
+	 */
 	public LevelParent(String backgroundImageName, double screenHeight, double screenWidth, int playerInitialHealth) {
 		this.root = new Group();
 		this.scene = new Scene(root, screenWidth, screenHeight);
@@ -67,19 +80,42 @@ public abstract class LevelParent extends Observable {
 		this.collisionDetect = new CollisionDetect(root, heartDisplay);
 	}
 
-	protected void initializeFriendlyUnits(){
+	/**
+	 * Initializes friendly units for the level.
+	 */
+	protected void initializeFriendlyUnits() {
 		getRoot().getChildren().add(getUser());
-	};
-
-	protected void initializeEnemyUnits(){
 	}
 
+	/**
+	 * Initializes enemy units for the level.
+	 * This method is to be implemented by subclasses.
+	 */
+	protected void initializeEnemyUnits() {
+	}
+
+	/**
+	 * Checks if the game is over. This method must be implemented by subclasses.
+	 */
 	protected abstract void checkIfGameOver();
 
+	/**
+	 * Spawns enemy units in the level. This method must be implemented by subclasses.
+	 */
 	protected abstract void spawnEnemyUnits();
 
+	/**
+	 * Instantiates the level view for the current level. This method must be implemented by subclasses.
+	 *
+	 * @return a {@link LevelView} instance for the level.
+	 */
 	protected abstract LevelView instantiateLevelView();
 
+	/**
+	 * Initializes the scene for the level, including background, units, and input handling.
+	 *
+	 * @return the initialized {@link Scene}.
+	 */
 	public Scene initializeScene() {
 		initializeBackground();
 		initializeFriendlyUnits();
@@ -89,16 +125,27 @@ public abstract class LevelParent extends Observable {
 		return scene;
 	}
 
+	/**
+	 * Starts the game by focusing on the background and starting the timeline.
+	 */
 	public void startGame() {
 		background.requestFocus();
 		timeline.play();
 	}
 
+	/**
+	 * Transitions to the next level.
+	 *
+	 * @param levelType the type of the next level.
+	 */
 	public void goToNextLevel(LevelType levelType) {
 		setChanged();
 		notifyObservers(levelType);
 	}
 
+	/**
+	 * Updates the scene, including spawning enemies, handling collisions, and updating the level view.
+	 */
 	private void updateScene() {
 		spawnEnemyUnits();
 		generateEnemyFire();
@@ -111,17 +158,26 @@ public abstract class LevelParent extends Observable {
 		checkIfGameOver();
 	}
 
-	void updateUnits(){
+	/**
+	 * Updates all units by removing destroyed units and updating active units.
+	 */
+	void updateUnits() {
 		unitManager.removeAllDestroyedActors();
 		unitManager.updateActors();
 	}
 
+	/**
+	 * Initializes the game loop timeline.
+	 */
 	private void initializeTimeline() {
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		KeyFrame gameLoop = new KeyFrame(Duration.millis(MILLISECOND_DELAY), e -> updateScene());
 		timeline.getKeyFrames().add(gameLoop);
 	}
 
+	/**
+	 * Initializes the background of the scene.
+	 */
 	private void initializeBackground() {
 		background.setFocusTraversable(true);
 		background.setFitHeight(screenHeight);
@@ -129,35 +185,105 @@ public abstract class LevelParent extends Observable {
 		root.getChildren().add(background);
 	}
 
+	/**
+	 * Sets up input handling for the player's controls.
+	 */
 	private void setupInputHandling() {
 		background.setOnKeyPressed(inputDetect::handlePressed);
 		background.setOnKeyReleased(inputDetect::handleReleased);
 	}
 
-	private void handleCollision(){
+	/**
+	 * Handles all collisions in the game.
+	 */
+	private void handleCollision() {
 		collisionDetect.handleAllCollisions(friendlyUnits, enemyUnits, userProjectiles, enemyProjectiles, user, screenWidth);
 	}
 
+	/**
+	 * Updates the level view based on the player's health.
+	 */
 	private void updateLevelView() {
 		levelView.removeHearts(user.getHealth());
 	}
 
-	private void generateEnemyFire(){
+	/**
+	 * Generates fire for enemy units.
+	 */
+	private void generateEnemyFire() {
 		unitManager.generateEnemyFire();
-	};
+	}
 
+	/**
+	 * Updates the kill count for the user.
+	 */
 	private void updateKillCount() {
 		unitManager.updateKillCount(user, currentNumberOfEnemies);
 	}
 
-	protected void winGame() {
-		timeline.stop();
-		goToNextLevel(LevelType.WIN);
+	/**
+	 * Updates the number of enemies in the level.
+	 */
+	private void updateNumberOfEnemies() {
+		currentNumberOfEnemies = enemyUnits.size();
 	}
 
-	protected void loseGame() {
-		timeline.stop();
-		goToNextLevel(LevelType.GAME_OVER);
+	/**
+	 * Updates heart drops for the player's health.
+	 */
+	private void updateHeartDrops() {
+		collisionDetect.updateHeartDrops(user);
+	}
+
+	/**
+	 * Cleans up resources and stops the timeline. Allows subclasses to add custom cleanup logic.
+	 */
+	public void cleanup() {
+		stopTimeline();
+		clearResources();
+		onCleanup();
+	}
+
+	/**
+	 * Stops the timeline and clears its keyframes.
+	 */
+	private void stopTimeline() {
+		if (timeline != null) {
+			timeline.stop();
+			timeline.getKeyFrames().clear();
+		}
+	}
+
+	/**
+	 * Clears resources used in the level.
+	 */
+	private void clearResources() {
+		root.getChildren().clear();
+		background.setOnKeyPressed(null);
+		background.setOnKeyReleased(null);
+		friendlyUnits.clear();
+		enemyUnits.clear();
+		userProjectiles.clear();
+		enemyProjectiles.clear();
+	}
+
+	/**
+	 * Hook for custom cleanup logic in subclasses.
+	 */
+	protected void onCleanup() {
+	}
+
+	// Getters for level properties and game elements
+	public Timeline getTimeline() {
+		return timeline;
+	}
+
+	public List<ActiveActorDestructible> getFriendlyUnits() {
+		return friendlyUnits;
+	}
+
+	public List<ActiveActorDestructible> getEnemyUnits() {
+		return enemyUnits;
 	}
 
 	protected UserPlane getUser() {
@@ -188,50 +314,13 @@ public abstract class LevelParent extends Observable {
 		return user.isDestroyed();
 	}
 
-	private void updateNumberOfEnemies() {
-		currentNumberOfEnemies = enemyUnits.size();
+	protected void winGame() {
+		timeline.stop();
+		goToNextLevel(LevelType.WIN);
 	}
 
-	public void cleanup() {
-		stopTimeline();
-		clearResources();
-		onCleanup(); // Hook for derived classes
-	}
-
-	private void stopTimeline() {
-		if (timeline != null) {
-			timeline.stop();
-			timeline.getKeyFrames().clear();
-		}
-	}
-
-	private void clearResources() {
-		root.getChildren().clear();
-		background.setOnKeyPressed(null);
-		background.setOnKeyReleased(null);
-		friendlyUnits.clear();
-		enemyUnits.clear();
-		userProjectiles.clear();
-		enemyProjectiles.clear();
-	}
-
-	protected void onCleanup() {
-		// Subclasses can override to add custom cleanup logic
-	}
-
-	private void updateHeartDrops(){
-		collisionDetect.updateHeartDrops(user);
-	};
-
-	public Timeline getTimeline() {
-		return timeline;
-	}
-
-	public List<ActiveActorDestructible> getFriendlyUnits() {
-		return friendlyUnits;
-	}
-
-	public List<ActiveActorDestructible> getEnemyUnits() {
-		return enemyUnits;
+	protected void loseGame() {
+		timeline.stop();
+		goToNextLevel(LevelType.GAME_OVER);
 	}
 }

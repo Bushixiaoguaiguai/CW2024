@@ -3,8 +3,8 @@ package com.example.demo.level.manager;
 import com.example.demo.actors.friends.HeartDrop;
 import com.example.demo.actors.shared.ActiveActorDestructible;
 import com.example.demo.actors.friends.UserPlane;
-import com.example.demo.effect.Explosion;
-import com.example.demo.effect.HeartDisplay;
+import com.example.demo.display.Explosion;
+import com.example.demo.display.HeartDisplay;
 import javafx.scene.Group;
 
 import java.util.*;
@@ -144,6 +144,14 @@ public class CollisionDetect {
         }
     }
 
+    /**
+     * Updates the position of heart drops and handles interactions with the user's plane.
+     *
+     * <p>Heart drops that collide with the user's plane are collected, increasing the plane's health and updating the heart display.
+     * Heart drops that move off-screen are removed from the scene.</p>
+     *
+     * @param userPlane The player's {@link UserPlane} object.
+     */
     public void updateHeartDrops(UserPlane userPlane) {
         Iterator<HeartDrop> iterator = heartDrops.iterator();
         while (iterator.hasNext()) {

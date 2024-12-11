@@ -1,4 +1,4 @@
-package com.example.demo.effect;
+package com.example.demo.display;
 
 import com.example.demo.actors.enemies.Boss;
 import javafx.beans.binding.Bindings;

@@ -9,7 +9,7 @@ module com.example.demo {
     exports com.example.demo.controller;
     opens com.example.demo.level to javafx.fxml;
 //    opens com.example.demo.actors to javafx.fxml;
-    opens com.example.demo.effect to javafx.fxml;
+    opens com.example.demo.display to javafx.fxml;
     opens com.example.demo.level.screens to javafx.fxml;
     opens com.example.demo.actors.shared to javafx.fxml;
     opens com.example.demo.actors.friends to javafx.fxml;

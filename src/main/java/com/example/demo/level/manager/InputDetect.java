@@ -66,7 +66,8 @@ public class InputDetect {
      *
      * <p>Supported keys and their actions:
      * <ul>
-     *     <li><b>UP</b> or <b>DOWN</b>: Stops the user's plane movement.</li>
+     *     <li><b>UP</b> or <b>DOWN</b>: Stops the user's plane vertical movement.</li>
+     *     <li><b>LEFT</b> or <b>RIGHT</b>: Stops the user's plane horizontal movement.</li>
      *     <li><b>SPACE</b>: Resets the projectile firing state.</li>
      * </ul>
      *
@@ -93,6 +94,11 @@ public class InputDetect {
         userProjectiles.add(projectile);
     }
 
+    /**
+     * Checks whether the space key is currently pressed.
+     *
+     * @return {@code true} if the space key is pressed, {@code false} otherwise
+     */
     public boolean isSpacePressed() {
         return isSpacePressed;
     }

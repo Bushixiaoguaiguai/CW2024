@@ -1,6 +1,6 @@
 package com.example.demo.level.screens;
 
-import com.example.demo.effect.GameOverImage;
+import com.example.demo.display.GameOverImage;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

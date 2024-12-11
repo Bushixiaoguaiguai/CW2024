@@ -10,6 +10,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
+/**
+ * Manages the transitions and interactions between different game levels and screens.
+ */
 public class Controller {
 	private final Stage stage;
 	private final LevelFactory levelFactory;
@@ -20,6 +23,11 @@ public class Controller {
 
 	private BackGroundMusicManager backGroundMusicManager;
 
+	/**
+	 * Initializes the Controller with the specified game stage.
+	 *
+	 * @param stage The primary stage for the game.
+	 */
 	public Controller(Stage stage) {
 		backGroundMusicManager = BackGroundMusicManager.getInstance();
 		backGroundMusicManager.setVolume(0.5); // Set volume to 50%
@@ -33,21 +41,22 @@ public class Controller {
 		stage.show();
 	}
 
-	// Transition to a new level
+	/**
+	 * Transitions to a new level based on the specified {@link LevelType}.
+	 *
+	 * @param levelType The type of level to transition to.
+	 */
 	public void goToLevel(LevelType levelType) {
 		try {
-			// Clean up the current level
 			if (currentLevel != null) {
 				currentLevel.cleanup();
 			}
 
-			// Handle transitions to special screens
 			switch (levelType) {
 				case MAIN_MENU -> showMainMenu();
 				case WIN -> showWinScreen();
 				case GAME_OVER -> showGameOverScreen();
 				default -> {
-					// Create and start a new game level
 					currentLevel = levelFactory.createLevel(levelType);
 					System.out.println(levelType);
 					currentLevel.addObserver((observable, arg) -> {
@@ -66,53 +75,65 @@ public class Controller {
 		}
 	}
 
-	// Handle level transitions
+	/**
+	 * Handles transitions between levels.
+	 *
+	 * @param nextLevel The next level to transition to.
+	 */
 	private void handleLevelTransition(LevelType nextLevel) {
 		goToLevel(nextLevel);
 	}
 
-	// Show Main Menu
+	/**
+	 * Displays the main menu screen.
+	 */
 	private void showMainMenu() {
 		Scene mainMenuScene = new MainMenu(SCREEN_WIDTH, SCREEN_HEIGHT,
 				() -> goToLevel(LevelType.LEVEL_ONE),
-				() -> goToLevel(LevelType.LEVEL_INFINITY), // Start game callback
-				stage::close  // Quit callback
+				() -> goToLevel(LevelType.LEVEL_INFINITY),
+				stage::close
 		).getScene();
 		stage.setScene(mainMenuScene);
 	}
 
-	// Show Win Screen
+	/**
+	 * Displays the win screen.
+	 */
 	private void showWinScreen() {
 		Scene winScene = new WinScreen(SCREEN_WIDTH, SCREEN_HEIGHT,
-				() -> goToLevel(LevelType.LEVEL_INFINITY), // Retry callback
-				() -> goToLevel(LevelType.MAIN_MENU)  // Main menu callback
+				() -> goToLevel(LevelType.LEVEL_INFINITY),
+				() -> goToLevel(LevelType.MAIN_MENU)
 		).getScene();
 		stage.setScene(winScene);
 	}
 
+	/**
+	 * Displays the game over screen.
+	 */
 	private void showGameOverScreen() {
 		Runnable retryCallback;
 
-		// Determine the retry callback based on the current level
 		if (currentLevel instanceof LevelOne) {
-			retryCallback = () -> goToLevel(LevelType.LEVEL_ONE); // Retry LevelOne
+			retryCallback = () -> goToLevel(LevelType.LEVEL_ONE);
 		} else if (currentLevel instanceof LevelInfinity) {
-			retryCallback = () -> goToLevel(LevelType.LEVEL_INFINITY); // Retry LevelInfinity
+			retryCallback = () -> goToLevel(LevelType.LEVEL_INFINITY);
 		} else {
-			retryCallback = () -> goToLevel(LevelType.LEVEL_ONE); // Default to LevelOne
+			retryCallback = () -> goToLevel(LevelType.LEVEL_ONE);
 		}
 
-		// Create GameOverScreen with the determined retry callback
 		Scene gameOverScene = new GameOverScreen(SCREEN_WIDTH, SCREEN_HEIGHT,
-				retryCallback,  // Retry callback
-				() -> goToLevel(LevelType.MAIN_MENU) // Main menu callback
+				retryCallback,
+				() -> goToLevel(LevelType.MAIN_MENU)
 		).getScene();
 
 		stage.setScene(gameOverScene);
 	}
 
-
-	// Handle errors
+	/**
+	 * Handles exceptions and displays an error message to the user.
+	 *
+	 * @param e The exception to handle.
+	 */
 	private void handleException(Exception e) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setContentText("An error occurred: " + e.getMessage());

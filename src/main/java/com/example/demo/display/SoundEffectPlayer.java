@@ -1,16 +1,20 @@
-package com.example.demo.effect;
+package com.example.demo.display;
 
 import javafx.scene.media.AudioClip;
 
 import java.net.URL;
 
+/**
+ * Plays sound effects for the game using audio files.
+ */
 public class SoundEffectPlayer {
 
     private final AudioClip audioClip;
 
     /**
-     * Initializes the sound effect player with a given sound file.
-     * @param soundFilePath The relative file path to the sound effect (e.g., "/com/example/demo/audios/explosion.mp3").
+     * Initializes the sound display player with a given sound file.
+     *
+     * @param soundFilePath The relative file path to the sound display (e.g., "/com/example/demo/audios/explosion.mp3").
      */
     public SoundEffectPlayer(String soundFilePath) {
         URL resource = getClass().getResource(soundFilePath);
@@ -22,7 +26,7 @@ public class SoundEffectPlayer {
     }
 
     /**
-     * Plays the sound effect.
+     * Plays the sound display.
      */
     public void play() {
         if (audioClip != null) {
@@ -31,7 +35,8 @@ public class SoundEffectPlayer {
     }
 
     /**
-     * Adjusts the volume of the sound effect.
+     * Adjusts the volume of the sound display.
+     *
      * @param volume A double value between 0.0 (mute) and 1.0 (maximum volume).
      */
     public void setVolume(double volume) {
