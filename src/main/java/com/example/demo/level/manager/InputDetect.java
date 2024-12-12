@@ -42,6 +42,7 @@ public class InputDetect {
      *     <li><b>LEFT</b>: Moves the user's plane leftward.</li>
      *     <li><b>RIGHT</b>: Moves the user's plane rightward.</li>
      *     <li><b>SPACE</b>: Fires a projectile if the space key is pressed.</li>
+     *     <li><b>ESCAPE</b>: Pause game and turn to PauseScreen.</li>
      * </ul>
      *
      * @param e the {@link KeyEvent} triggered by a key press

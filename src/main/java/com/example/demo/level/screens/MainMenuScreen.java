@@ -13,10 +13,29 @@ import javafx.scene.image.ImageView;
 
 import java.util.Objects;
 
+/**
+ * Represents the main menu screen of the game.
+ * <p>
+ * The MainMenuScreen provides:
+ * <ul>
+ *     <li>A background image for the main menu.</li>
+ *     <li>Buttons to start the game, enter infinity mode, or quit the application.</li>
+ *     <li>Mute/unmute buttons for background music (BGM), shooting sound effects, and explosion sound effects.</li>
+ * </ul>
+ */
 public class MainMenuScreen {
 
     private final Scene scene;
 
+    /**
+     * Constructs a {@code MainMenuScreen} with the specified dimensions and button actions.
+     *
+     * @param screenWidth        the width of the main menu screen.
+     * @param screenHeight       the height of the main menu screen.
+     * @param startGameCallback  a {@link Runnable} action triggered when the "Start Game" button is clicked.
+     * @param infinityModeCallback a {@link Runnable} action triggered when the "Infinity Mode" button is clicked.
+     * @param quitCallback       a {@link Runnable} action triggered when the "Quit" button is clicked.
+     */
     public MainMenuScreen(double screenWidth, double screenHeight, Runnable startGameCallback, Runnable infinityModeCallback, Runnable quitCallback) {
         // Background Image
         ImageView background = new ImageView(new Image(Objects.requireNonNull(getClass().getResource("/com/example/demo/images/main.png")).toExternalForm()));
@@ -81,6 +100,13 @@ public class MainMenuScreen {
         scene = new Scene(root, screenWidth, screenHeight);
     }
 
+    /**
+     * Creates a styled button with the specified text and action.
+     *
+     * @param text   the label of the button.
+     * @param action the {@link Runnable} action triggered when the button is clicked.
+     * @return the created {@link Button}.
+     */
     private Button createButton(String text, Runnable action) {
         Button button = new Button(text);
         button.setStyle("-fx-font-size: 18px; -fx-padding: 10px 20px;");
@@ -88,6 +114,14 @@ public class MainMenuScreen {
         return button;
     }
 
+    /**
+     * Creates a styled mute/unmute button with the specified text, state, and volume adjustment action.
+     *
+     * @param text           the label of the mute/unmute button (e.g., "BGM", "Shoot").
+     * @param isMuted        a boolean array indicating the current mute state.
+     * @param setVolumeAction the {@link Runnable} action to adjust the volume.
+     * @return the created {@link Button}.
+     */
     private Button createMuteButton(String text, final boolean[] isMuted, final Runnable setVolumeAction) {
         Button button = new Button(isMuted[0] ? "Unmute " + text : "Mute " + text);
         button.setStyle("-fx-font-size: 12px; -fx-padding: 5px 10px;");
@@ -99,6 +133,11 @@ public class MainMenuScreen {
         return button;
     }
 
+    /**
+     * Retrieves the {@link Scene} for the MainMenuScreen.
+     *
+     * @return the {@link Scene} containing the MainMenuScreen layout.
+     */
     public Scene getScene() {
         return scene;
     }
