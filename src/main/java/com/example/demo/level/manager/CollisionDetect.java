@@ -47,6 +47,8 @@ public class CollisionDetect {
         handleCollisions(enemyProjectiles, friendlyUnits);
         handleCollisions(friendlyUnits, enemyUnits);
         updateExplosions();
+        handleProjectilePenetration(userProjectiles, screenWidth);
+        handleProjectilePenetration(enemyProjectiles, screenWidth);
     }
 
     /**
@@ -169,4 +171,25 @@ public class CollisionDetect {
             }
         }
     }
+
+    /**
+     * Handles the removal of projectiles that have exceeded the screen boundaries.
+     *
+     * <p>This method iterates through a list of projectiles and checks whether each projectile
+     * has moved outside the horizontal boundaries of the screen. If a projectile is out of bounds,
+     * it is destroyed but not explicitly removed from the list. The caller is responsible for
+     * ensuring that destroyed projectiles are eventually removed if needed.
+     *
+     * @param projectiles  the list of projectiles to check for boundary violations
+     * @param screenWidth  the width of the screen used to determine the right boundary
+     */
+    public void handleProjectilePenetration(List<ActiveActorDestructible> projectiles, double screenWidth) {
+        for (ActiveActorDestructible projectile: projectiles) {
+            double projectileXPosition = projectile.getLayoutX() + projectile.getTranslateX();
+            if (projectileXPosition < 0 || projectileXPosition > screenWidth) {
+                projectile.destroy();
+            }
+        }
+    }
+
 }
