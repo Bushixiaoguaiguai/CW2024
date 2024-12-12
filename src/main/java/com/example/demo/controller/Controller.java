@@ -16,7 +16,7 @@ import javafx.stage.Stage;
  */
 public class Controller {
 
-//	private static Controller instance;
+	private static Controller instance;
 
 	private final Stage stage;
 	private final LevelFactory levelFactory;
@@ -45,19 +45,19 @@ public class Controller {
 		stage.show();
 	}
 
-//	public static Controller getInstance(Stage stage) {
-//		if (instance == null) {
-//			instance = new Controller(stage);
-//		}
-//		return instance;
-//	}
-//
-//	public static Controller getInstance() {
-//		if (instance == null) {
-//			throw new IllegalStateException("Controller not initialized yet!");
-//		}
-//		return instance;
-//	}
+	public static Controller getInstance(Stage stage) {
+		if (instance == null) {
+			instance = new Controller(stage);
+		}
+		return instance;
+	}
+
+	public static Controller getInstance() {
+		if (instance == null) {
+			throw new IllegalStateException("Controller not initialized yet!");
+		}
+		return instance;
+	}
 
 	/**
 	 * Transitions to a new level based on the specified {@link LevelType}.
