@@ -97,6 +97,11 @@ Before you begin, ensure you have the following installed:
  - Simplified background setup by separating visual and input handling into distinct methods.
  - Enhanced cleanup process with a protected onCleanup hook for custom level-specific cleanup logic.
 
+6. **Apply singleton design pattern** Apply Singleton pattern to Controller class 
+- Refactored the Controller class to implement the Singleton pattern, ensuring a single instance is used throughout the application.
+- Added static methods to initialize and retrieve the Controller instance.
+- Improved code maintainability and prevented redundant Controller instances from being created.
+
 ### Features Added
 1. **Explosion effects** Implemented explosion effects for collisions 
  - Added Explosion class to create and manage explosion animations using sprite sheets.
@@ -187,6 +192,12 @@ Before you begin, ensure you have the following installed:
     - HeartDisplay dynamically updates to reflect health changes (hearts added or removed).
  - Added logging for debugging:
     - Logs HeartDrop generation position and collection events.
+
+9. **Pause game** Add Pause Screen functionality 
+ - Introduced a PauseScreen class to allow players to pause the game.
+ - Pause menu includes options to resume the game, return to the main menu, or quit the application.
+ - Integrated pause and resume functionality into the Controller and LevelParent classes.
+ - Ensured game timeline pauses when transitioning to the pause menu and resumes when returning to the game.
 
 
 ## Implemented but Not Working Properly
@@ -469,7 +480,27 @@ Before you begin, ensure you have the following installed:
 #### Key Attributes
 - `Scene scene`: Represents the JavaFX scene for the win screen.
 
-### 9. Class: `LevelFactory`
+### 9. Class: `PauseScreen`
+- **Location**: `com.example.demo.level.screens.PauseScreen`
+- **Purpose**: The `PauseScreen` class represents the pause menu displayed during gameplay. It provides options for the player to resume the game, return to the main menu, or quit the game.
+
+#### Key Methods
+- **Constructor**:
+  - `PauseScreen(double screenWidth, double screenHeight, Runnable resumeCallback, Runnable mainMenuCallback, Runnable quitCallback)`:
+    Initializes the pause menu with buttons for resuming the game, returning to the main menu, and quitting. The layout is vertically aligned and centered within the provided screen dimensions.
+
+- **Utility**:
+  - `getScene()`:
+    Returns the `Scene` object representing the pause menu.
+
+  - `createButton(String text, Runnable action)` *(private)*:
+    Creates a styled button with the specified text and action. Buttons are styled for consistent appearance.
+
+#### Key Attributes
+- `Scene scene`: The JavaFX scene containing the pause menu layout and buttons.
+
+
+### 10. Class: `LevelFactory`
 - **Location**: `com.example.demo.level.LevelFactory`
 - **Purpose**: The `LevelFactory` class is a factory for dynamically creating game levels based on their `LevelType`. It allows for centralized registration and instantiation of different game levels.
 
@@ -489,7 +520,7 @@ Before you begin, ensure you have the following installed:
 #### Key Attributes
 - `Map<LevelType, Supplier<LevelParent>> levelMap`: Maps level types to their respective suppliers for creation.
 
-### 10. Class: `LevelInfinity`
+### 11. Class: `LevelInfinity`
 - **Location**: `com.example.demo.level.LevelInfinity`
 - **Purpose**: Represents the infinite mode of the game where enemies spawn continuously until the player's plane is destroyed.
 
@@ -522,7 +553,7 @@ Before you begin, ensure you have the following installed:
 - `double ENEMY_SPAWN_PROBABILITY`: Probability for spawning an enemy.
 - `DestroyPlanesCounter destroyPlanesCounter`: Counter for tracking destroyed planes.
 
-### 11. Enum: `LevelType`
+### 12. Enum: `LevelType`
 - **Location**: `com.example.demo.level.LevelType`
 - **Purpose**: Defines the various types of levels and game states in the application.
 
@@ -534,7 +565,7 @@ Before you begin, ensure you have the following installed:
 - `WIN`: Represents the game state when the player wins.
 - `GAME_OVER`: Represents the game state when the player loses.
 
-### 12. Class: `HpBarDisplay`
+### 13. Class: `HpBarDisplay`
 - **Location**: `com.example.demo.display.HpBarDisplay`
 - **Purpose**: The `HpBarDisplay` class provides a visual health bar for a boss character. The bar dynamically adjusts its width based on the boss's current health.
 
@@ -556,7 +587,7 @@ Before you begin, ensure you have the following installed:
 - `static final int BAR_WIDTH`: The fixed width of the health bar.
 - `static final int BAR_HEIGHT`: The fixed height of the health bar.
 
-### 13. Class: `SoundEffectPlayer`
+### 14. Class: `SoundEffectPlayer`
 - **Location**: `com.example.demo.display.SoundEffectPlayer`
 - **Purpose**: Plays sound effects in the game using audio files, with options to control playback and volume.
 
@@ -575,7 +606,7 @@ Before you begin, ensure you have the following installed:
 #### Key Attributes
 - `AudioClip audioClip`: Represents the audio file loaded for playback.
 
-### 14. Class: `DestroyPlanesCounter`
+### 15. Class: `DestroyPlanesCounter`
 - **Location**: `com.example.demo.display.DestroyPlanesCounter`
 - **Purpose**: Displays the number of planes destroyed by the user, updating dynamically as the user's kill count changes.
 
@@ -587,7 +618,7 @@ Before you begin, ensure you have the following installed:
 #### Key Attributes
 - `Label counterLabel`: Displays the number of planes destroyed.
 
-### 15. Class: `Explosion`
+### 16. Class: `Explosion`
 - **Location**: `com.example.demo.display.Explosion`
 - **Purpose**: Represents an animated explosion using a sprite sheet, with functionality to start, stop, and clean up the animation.
 
@@ -617,7 +648,7 @@ Before you begin, ensure you have the following installed:
 - `boolean isFinished`: Tracks whether the animation has completed.
 - `boolean isPlaying`: Tracks whether the animation is currently playing.
 
-### 16. Class: `HeartDrop`
+### 17. Class: `HeartDrop`
 - **Location**: `com.example.demo.actors.friends.HeartDrop`
 - **Purpose**: The `HeartDrop` class represents a collectible heart in the game that increases the player's health. It extends the `ActiveActor` class and defines its movement and interactions.
 
@@ -662,71 +693,83 @@ Before you begin, ensure you have the following installed:
 
 ### 2. Class: `Controller`
 **Changes**:
-1. **Replaced Reflection-Based Level Loading**:
+1. **Implemented Singleton Pattern**:
    - **Original**:
+     Each `Controller` instance was created directly via the constructor.
+   - **Modified**:
+     Added `getInstance(Stage stage)` and `getInstance()` methods to enforce a single instance:
      ```java
-     private void goToLevel(String className) throws ClassNotFoundException, NoSuchMethodException, SecurityException,
-         InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-         Class<?> myClass = Class.forName(className);
-         Constructor<?> constructor = myClass.getConstructor(double.class, double.class);
-         LevelParent myLevel = (LevelParent) constructor.newInstance(stage.getHeight(), stage.getWidth());
-         myLevel.addObserver(this);
-         Scene scene = myLevel.initializeScene();
-         stage.setScene(scene);
-         myLevel.startGame();
+     private static Controller instance;
+
+     public static Controller getInstance(Stage stage) {
+         if (instance == null) {
+             instance = new Controller(stage);
+         }
+         return instance;
+     }
+
+     public static Controller getInstance() {
+         if (instance == null) {
+             throw new IllegalStateException("Controller not initialized yet!");
+         }
+         return instance;
      }
      ```
+
+2. **Added Pause Menu Functionality**:
    - **Modified**:
+     Introduced methods to handle the pause screen:
      ```java
-     public void goToLevel(LevelType levelType) {
-         try {
-             if (currentLevel != null) {
-                 currentLevel.cleanup();
-             }
-             switch (levelType) {
-                 case MAIN_MENU -> showMainMenu();
-                 case WIN -> showWinScreen();
-                 case GAME_OVER -> showGameOverScreen();
-                 default -> {
-                     currentLevel = levelFactory.createLevel(levelType);
-                     currentLevel.addObserver((observable, arg) -> {
-                         if (arg instanceof LevelType nextLevelType) {
-                             handleLevelTransition(nextLevelType);
-                         } else {
-                             handleException(new IllegalArgumentException("Invalid level transition argument: " + arg));
-                         }
-                     });
-                     stage.setScene(currentLevel.initializeScene());
-                     currentLevel.startGame();
-                 }
-             }
-         } catch (Exception e) {
-             handleException(e);
+     public void goToPauseMenu() {
+         if (currentLevel != null) {
+             currentLevel.pauseGame();
+         }
+         Scene pauseScreenScene = new PauseScreen(
+                 SCREEN_WIDTH, SCREEN_HEIGHT,
+                 this::resumeGame,
+                 () -> goToLevel(LevelType.MAIN_MENU),
+                 stage::close
+         ).getScene();
+         stage.setScene(pauseScreenScene);
+     }
+
+     public void pauseGame() {
+         if (currentLevel != null) {
+             currentLevel.pauseGame();
+         }
+         goToPauseMenu();
+     }
+
+     public void resumeGame() {
+         if (currentLevel != null) {
+             currentLevel.resumeGame();
+             stage.setScene(currentLevel.getScene());
          }
      }
      ```
 
-2. **Added Main Menu, Win Screen, and Game Over Screen Handling**:
-   - **Modified**:
-     - Added `showMainMenu()`, `showWinScreen()`, and `showGameOverScreen()` methods to manage transitions to UI screens.
+3. **Enhanced Level Management**:
+   - Updated `goToLevel` to clean up the current level before transitioning:
+     ```java
+     if (currentLevel != null) {
+         currentLevel.cleanup();
+     }
+     ```
 
-3. **Background Music Management**:
+4. **Integrated Background Music Manager**:
    - **Modified**:
-     - Integrated `BackgroundMusicManager` initialization and playback in the `Controller` constructor:
-       ```java
-       backGroundMusicManager = BackgroundMusicManager.getInstance();
-       backGroundMusicManager.setVolume(0.5);
-       backGroundMusicManager.play();
-       ```
-
-4. **Exception Handling**:
-   - Enhanced error reporting with the `handleException()` method to provide user-friendly alerts and log errors.
+     Added background music initialization and playback:
+     ```java
+     backGroundMusicManager = BackgroundMusicManager.getInstance();
+     backGroundMusicManager.setVolume(0.5); // Set volume to 50%
+     backGroundMusicManager.play();
+     ```
 
 **Reason**:
-- The reflection-based level loading was replaced with a cleaner, more type-safe approach using a `LevelFactory` and `LevelType` enumeration.
-- Added UI management for the main menu, win screen, and game over screen for a more interactive and structured game flow.
-- Introduced background music management to enhance the gaming experience.
-- Improved exception handling for better debugging and error recovery.
+- The Singleton pattern ensures consistent access to the `Controller` instance across the application.
+- The pause menu functionality enhances user experience by allowing gameplay interruptions without restarting.
+- Improved level cleanup ensures resource management and smoother transitions between levels.
+- Background music integration enriches the game's auditory experience.
 
 ### 3. Class: `LevelView`
 **Changes**:
@@ -773,7 +816,7 @@ Before you begin, ensure you have the following installed:
      These methods were removed.
 
 **Reason**:
-- Transitioned the responsibility for managing win and game-over screens to a higher-level component, likely the `Controller`.
+- Transitioned the responsibility for managing win and game-over screens to `Controller`.
 - Simplified the `LevelView` class to focus solely on managing the player's health display, aligning with single-responsibility principles.
 
 ### 4. Class: `LevelViewLevelTwo`
@@ -1018,3 +1061,4 @@ Before you begin, ensure you have the following installed:
 - Improved resource validation to ensure the image is properly loaded and avoid potential null pointer exceptions.
 
 ## Unexpected Problems
+The background Image of the MainmenuScreen is not correctly shown, which is needed to be fixed.
