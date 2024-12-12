@@ -213,9 +213,6 @@ Before you begin, ensure you have the following installed:
  - Mechanisms that disappear over time is the same with boss shield disappers.
  - The form of upgrade is hard to choose.
 
-2. **Pause Menu**
- - The user can pause the game whenever he/she wants.
-
 ## New Java Classes
 
 ### 1. Class: `UnitManager`
