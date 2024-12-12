@@ -1,6 +1,6 @@
 package com.example.demo.level.screens;
 
-import com.example.demo.level.manager.BackGroundMusicManager;
+import com.example.demo.level.manager.BackgroundMusicManager;
 import com.example.demo.level.manager.SoundEffectManager;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,11 +13,11 @@ import javafx.scene.image.ImageView;
 
 import java.util.Objects;
 
-public class MainMenu {
+public class MainMenuScreen {
 
     private final Scene scene;
 
-    public MainMenu(double screenWidth, double screenHeight, Runnable startGameCallback, Runnable infinityModeCallback, Runnable quitCallback) {
+    public MainMenuScreen(double screenWidth, double screenHeight, Runnable startGameCallback, Runnable infinityModeCallback, Runnable quitCallback) {
         // Background Image
         ImageView background = new ImageView(new Image(Objects.requireNonNull(getClass().getResource("/com/example/demo/images/main.png")).toExternalForm()));
         background.setFitWidth(screenWidth);
@@ -34,15 +34,15 @@ public class MainMenu {
         final boolean[] shootMuted = {false};
         final boolean[] explosionMuted = {false};
 
-        double bgmOriginalVolume = BackGroundMusicManager.getInstance().getVolume();
+        double bgmOriginalVolume = BackgroundMusicManager.getInstance().getVolume();
         double shootOriginalVolume = SoundEffectManager.getInstance().getShootVolume();
         double explosionOriginalVolume = SoundEffectManager.getInstance().getExplosionVolume();
 
         Runnable bgmSetVolumeAction = () -> {
             if (bgmMuted[0]) {
-                BackGroundMusicManager.getInstance().setVolume(0.0);
+                BackgroundMusicManager.getInstance().setVolume(0.0);
             } else {
-                BackGroundMusicManager.getInstance().setVolume(bgmOriginalVolume);
+                BackgroundMusicManager.getInstance().setVolume(bgmOriginalVolume);
             }
         };
 

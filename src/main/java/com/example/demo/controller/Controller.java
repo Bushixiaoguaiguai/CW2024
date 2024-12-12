@@ -1,9 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.level.manager.BackGroundMusicManager;
+import com.example.demo.level.manager.BackgroundMusicManager;
 import com.example.demo.level.*;
 import com.example.demo.level.screens.GameOverScreen;
-import com.example.demo.level.screens.MainMenu;
+import com.example.demo.level.screens.MainMenuScreen;
+import com.example.demo.level.screens.PauseScreen;
 import com.example.demo.level.screens.WinScreen;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -14,6 +15,9 @@ import javafx.stage.Stage;
  * Manages the transitions and interactions between different game levels and screens.
  */
 public class Controller {
+
+//	private static Controller instance;
+
 	private final Stage stage;
 	private final LevelFactory levelFactory;
 	private LevelParent currentLevel;
@@ -21,7 +25,7 @@ public class Controller {
 	private static final int SCREEN_WIDTH = 1300;
 	private static final int SCREEN_HEIGHT = 750;
 
-	private BackGroundMusicManager backGroundMusicManager;
+	private BackgroundMusicManager backGroundMusicManager;
 
 	/**
 	 * Initializes the Controller with the specified game stage.
@@ -29,7 +33,7 @@ public class Controller {
 	 * @param stage The primary stage for the game.
 	 */
 	public Controller(Stage stage) {
-		backGroundMusicManager = BackGroundMusicManager.getInstance();
+		backGroundMusicManager = BackgroundMusicManager.getInstance();
 		backGroundMusicManager.setVolume(0.5); // Set volume to 50%
 		backGroundMusicManager.play();
 
@@ -40,6 +44,20 @@ public class Controller {
 		stage.setResizable(false);
 		stage.show();
 	}
+
+//	public static Controller getInstance(Stage stage) {
+//		if (instance == null) {
+//			instance = new Controller(stage);
+//		}
+//		return instance;
+//	}
+//
+//	public static Controller getInstance() {
+//		if (instance == null) {
+//			throw new IllegalStateException("Controller not initialized yet!");
+//		}
+//		return instance;
+//	}
 
 	/**
 	 * Transitions to a new level based on the specified {@link LevelType}.
@@ -88,7 +106,7 @@ public class Controller {
 	 * Displays the main menu screen.
 	 */
 	private void showMainMenu() {
-		Scene mainMenuScene = new MainMenu(SCREEN_WIDTH, SCREEN_HEIGHT,
+		Scene mainMenuScene = new MainMenuScreen(SCREEN_WIDTH, SCREEN_HEIGHT,
 				() -> goToLevel(LevelType.LEVEL_ONE),
 				() -> goToLevel(LevelType.LEVEL_INFINITY),
 				stage::close
@@ -140,4 +158,50 @@ public class Controller {
 		alert.show();
 		e.printStackTrace();
 	}
+
+	/**
+	 * Transitions the game to the pause menu screen.
+	 * <p>
+	 * This method pauses the current game (if running) and displays the pause menu.
+	 * The pause menu allows the player to resume the game, return to the main menu, or quit the application.
+	 */
+	public void goToPauseMenu() {
+		if (currentLevel != null) {
+			currentLevel.pauseGame(); // Pause the current game
+		}
+
+		Scene pauseScreenScene = new PauseScreen(
+				1300, 750,
+				this::resumeGame,                // Resume callback
+				() -> goToLevel(LevelType.MAIN_MENU), // Main Menu callback
+				stage::close                     // Quit callback
+		).getScene();
+
+		stage.setScene(pauseScreenScene); // Set the pause screen as the active scene
+	}
+
+	/**
+	 * Pauses the game by delegating the action to the current level and transitioning to the pause menu.
+	 * <p>
+	 * If a current level is active, its game logic is paused, and the pause menu screen is displayed.
+	 */
+	public void pauseGame() {
+		if (currentLevel != null) {
+			currentLevel.pauseGame(); // Delegate to LevelParent
+		}
+		goToPauseMenu(); // Transition to pause menu
+	}
+
+	/**
+	 * Resumes the game by restoring the timeline of the current level and switching back to the game scene.
+	 * <p>
+	 * This method ensures that the game returns to its active state after the pause menu is dismissed.
+	 */
+	public void resumeGame() {
+		if (currentLevel != null) {
+			currentLevel.resumeGame(); // Resume the game timeline
+			stage.setScene(currentLevel.getScene()); // Switch back to the game scene
+		}
+	}
+
 }

@@ -7,18 +7,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BackGroundMusicManagerTest extends JavaFXTestBase {
 
-    private BackGroundMusicManager bgmManager;
+    private BackgroundMusicManager bgmManager;
 
     @BeforeEach
     public void setUp() {
-        bgmManager = BackGroundMusicManager.getInstance();
+        bgmManager = BackgroundMusicManager.getInstance();
     }
 
     @Test
     public void testSingletonBehavior() {
-        BackGroundMusicManager instance1 = BackGroundMusicManager.getInstance();
-        BackGroundMusicManager instance2 = BackGroundMusicManager.getInstance();
-        assertSame(instance1, instance2, "BackGroundMusicManager should follow the singleton pattern");
+        BackgroundMusicManager instance1 = BackgroundMusicManager.getInstance();
+        BackgroundMusicManager instance2 = BackgroundMusicManager.getInstance();
+        assertSame(instance1, instance2, "BackgroundMusicManager should follow the singleton pattern");
     }
 
     @Test

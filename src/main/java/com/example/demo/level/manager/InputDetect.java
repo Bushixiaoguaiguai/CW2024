@@ -2,6 +2,7 @@ package com.example.demo.level.manager;
 
 import com.example.demo.actors.shared.ActiveActorDestructible;
 import com.example.demo.actors.friends.UserPlane;
+import com.example.demo.controller.Controller;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -57,6 +58,10 @@ public class InputDetect {
                     fireProjectile();
                     isSpacePressed = true;
                 }
+            }
+            case ESCAPE -> { // Trigger the pause menu
+                // Assuming the Controller instance is accessible
+                Controller.getInstance().pauseGame();
             }
         }
     }

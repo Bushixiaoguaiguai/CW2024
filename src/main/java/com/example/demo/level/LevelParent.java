@@ -273,6 +273,49 @@ public abstract class LevelParent extends Observable {
 	protected void onCleanup() {
 	}
 
+	/**
+	 * Handles the win condition for the game.
+	 * <p>
+	 * This method stops the game's timeline and transitions to the win screen.
+	 */
+	protected void winGame() {
+		timeline.stop();
+		goToNextLevel(LevelType.WIN);
+	}
+
+	/**
+	 * Handles the lose condition for the game.
+	 * <p>
+	 * This method stops the game's timeline and transitions to the game over screen.
+	 */
+	protected void loseGame() {
+		timeline.stop();
+		goToNextLevel(LevelType.GAME_OVER);
+	}
+
+	/**
+	 * Pauses the game by stopping the timeline if it is currently running.
+	 * <p>
+	 * This method ensures that the game's timeline is only paused when it is in the running state.
+	 */
+	public void pauseGame() {
+		if (timeline != null && timeline.getStatus() == Animation.Status.RUNNING) {
+			timeline.pause(); // Pause only if it's currently running
+		}
+	}
+
+	/**
+	 * Resumes the game by restarting the timeline if it is currently paused.
+	 * <p>
+	 * This method ensures that the game's timeline is only resumed when it is in the paused state.
+	 */
+	public void resumeGame() {
+		if (timeline != null && timeline.getStatus() == Animation.Status.PAUSED) {
+			timeline.play(); // Resume only if it's currently paused
+		}
+	}
+
+
 	// Getters for level properties and game elements
 	public Timeline getTimeline() {
 		return timeline;
@@ -314,13 +357,7 @@ public abstract class LevelParent extends Observable {
 		return user.isDestroyed();
 	}
 
-	protected void winGame() {
-		timeline.stop();
-		goToNextLevel(LevelType.WIN);
-	}
-
-	protected void loseGame() {
-		timeline.stop();
-		goToNextLevel(LevelType.GAME_OVER);
+	public Scene getScene() {
+		return scene;
 	}
 }

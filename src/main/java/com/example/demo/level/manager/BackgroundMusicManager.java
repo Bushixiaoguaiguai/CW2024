@@ -10,16 +10,16 @@ import java.net.URL;
  * This class provides functionality to play, stop, and adjust the volume of background music.
  * It follows the Singleton design pattern to ensure a single instance manages the music.
  */
-public class BackGroundMusicManager {
+public class BackgroundMusicManager {
 
-    private static BackGroundMusicManager instance;
+    private static BackgroundMusicManager instance;
     private MediaPlayer mediaPlayer;
 
     /**
      * Private constructor to initialize the background music manager.
      * Loads the background music and sets it to loop indefinitely.
      */
-    private BackGroundMusicManager() {
+    private BackgroundMusicManager() {
         URL resource = getClass().getResource("/com/example/demo/audios/bgm.mp3");
         if (resource != null) {
             Media media = new Media(resource.toString());
@@ -31,13 +31,13 @@ public class BackGroundMusicManager {
     }
 
     /**
-     * Returns the singleton instance of the BackGroundMusicManager.
+     * Returns the singleton instance of the BackgroundMusicManager.
      *
-     * @return The singleton instance of BackGroundMusicManager.
+     * @return The singleton instance of BackgroundMusicManager.
      */
-    public static BackGroundMusicManager getInstance() {
+    public static BackgroundMusicManager getInstance() {
         if (instance == null) {
-            instance = new BackGroundMusicManager();
+            instance = new BackgroundMusicManager();
         }
         return instance;
     }

@@ -17,7 +17,7 @@ public class Main extends Application {
 	 */
 	@Override
 	public void start(Stage stage) {
-		Controller controller = new Controller(stage);
+		Controller controller = Controller.getInstance(stage);
 
 		controller.goToLevel(LevelType.MAIN_MENU);
 	}
