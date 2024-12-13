@@ -9,7 +9,7 @@ import java.net.URL;
  */
 public class SoundEffectPlayer {
 
-    private final AudioClip audioClip;
+    final AudioClip audioClip;
 
     /**
      * Initializes the sound display player with a given sound file.
