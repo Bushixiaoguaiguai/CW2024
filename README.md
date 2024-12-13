@@ -1059,3 +1059,5 @@ Before you begin, ensure you have the following installed:
 
 ## Unexpected Problems
 The background Image of the MainmenuScreen is not correctly shown, which is needed to be fixed.
+The mute and unmute button is not binded with the state of sounds, it will always show mute at the entrance of Mainmenu.
+- should get whether the sound is played and generate the words of button.
